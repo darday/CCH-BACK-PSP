@@ -16,7 +16,7 @@ class CreateMontlyToursUsersTable extends Migration
         Schema::create('monthly_tours_users', function (Blueprint $table) {
             $table->id('monthly_tour_user_id');
             $table->foreignId('monthly_tour_id')->references('monthly_tour_id')-> on ('monthly_tours');
-            $table->foreignId('user_id')->references('user_id')->on('users');
+            $table->foreignId('user_id')->references('id')->on('users');
             $table->integer('seats');
             $table->text('coment');
             $table->text('img_voucher');
