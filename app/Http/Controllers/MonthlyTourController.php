@@ -24,7 +24,7 @@ class MonthlyTourController extends Controller
      */
     public function create()
     {
-        //
+        return ("AAAAA");
     }
 
     /**
@@ -35,7 +35,19 @@ class MonthlyTourController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        // $data = $request->all();
+        return("hola");
+
+    //     if($request -> hasFile('img_1') || $request -> hasFile('img_2')){
+    //         return($request);
+    //     }else{
+    //         return("hola");
+    //     }
+    //     MonthlyTour::insert($data);
+
+
+
+    //    return $data;
     }
 
     /**

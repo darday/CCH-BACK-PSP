@@ -15,17 +15,20 @@ class AuthController extends Controller
         // var_dump(($credentials));
         if(!Auth::attempt($credentials)){
             return response([
-                "message"=>"Usuario y/o contrase;a invalida",
-                "response"=>true,
+                "message"=>"Usuario y/o contraseña invalida",
+                "response"=>false,
                 "status"=>200
-            ],422);
+            ],200);
         }
         
         $user = Auth::user();
         $accessToken = $user->createToken('authToken')->accessToken;
         return response([
             "user"=>$user,
+            "response"=>200,
             "accessToken"=>$accessToken,
+            "success"=>true,
+            "rol"=>$user->rol
             
         ]);
     }
@@ -38,8 +41,8 @@ class AuthController extends Controller
             'name'=>'required|max:255',
             'last_name'=>'required|max:255',
             'email'=>'required|email|unique:users',
-            'ci'=>'required',
-            'password'=>'required|confirmed'
+            'password'=>'required|confirmed',
+            'cellphone'=>'required'
 
         ]);
 
