@@ -27,14 +27,14 @@ class CreateMonthlyToursTable extends Migration
             $table->float('person_cost');
             $table->float('group_cost');
             $table->float('discount');
-            $table->float('income');
-            $table->float('egress');
-            $table->float('utility');
+            $table->float('income')->nullable();
+            $table->float('egress')->nullable();
+            $table->float('utility')->nullable();
             $table->date('departure_date');
             $table->date('return_date');
-            $table->string('varchar_1');
-            $table->string('varchar_2');
-            $table->string('varchar_3');
+            $table->string('varchar_1')->nullable();
+            $table->string('varchar_2')->nullable();
+            $table->string('varchar_3')->nullable();
             $table->timestamps();
         });
     }

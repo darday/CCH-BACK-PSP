@@ -35,19 +35,34 @@ class MonthlyTourController extends Controller
      */
     public function store(Request $request)
     {
-        // $data = $request->all();
-        return("hola");
+        $request->validate([
+            'img_1'=>'required|image',
+            'img_2'=>'required|image',
+        ]);
 
-    //     if($request -> hasFile('img_1') || $request -> hasFile('img_2')){
-    //         return($request);
-    //     }else{
-    //         return("hola");
-    //     }
-    //     MonthlyTour::insert($data);
+        $data = ($request->all());
+        if($request->hasFile('img_1')|| $request->hasFile('img_2')){
+            $path1=$request->img_1->store('catalogue','public');
+            $path2=$request->img_2->store('catalogue','public');
+        }else{
+            return response([
+                "response"=>'500',
+                "success"=>false,
+            ]);
+        }
 
+        $data['img_1']=$path1;
+        $data['img_2']=$path2;
 
+        MonthlyTour::insert($data);
 
-    //    return $data;
+        return response([
+            "data"=>$data,
+            "messagge"=>"Tour Agregado Correctamente",
+            "response"=>200,
+            "success"=>true,
+        ]);
+
     }
 
     /**

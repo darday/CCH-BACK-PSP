@@ -109,4 +109,10 @@ class TourCatalogueController extends Controller
     {
         //
     }
+
+    public function showTour($id)
+    {
+        $tour =  tour_catalogue::where('tour_catalogues_id',$id)->get();
+        return($tour);
+    }
 }
