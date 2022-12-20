@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\EquipmentController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\MonthlyTourController;
 use App\Http\Controllers\TourCatalogueController;
@@ -44,6 +45,9 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     Route::post('/catalogue-add',[TourCatalogueController::class, 'store']); 
     Route::get('/catalogue-list',[TourCatalogueController::class, 'index']); 
     Route::get('/show-catalogue-tour/{tour}',[TourCatalogueController::class, 'showTour']); 
+
+    ///////////////////////// EQUIPMENT
+    Route::post('/equipment-add',[EquipmentController::class, 'store']);
 
 
 

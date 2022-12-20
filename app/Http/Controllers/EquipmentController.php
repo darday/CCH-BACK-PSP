@@ -35,7 +35,31 @@ class EquipmentController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        // return($request);
+        
+        $request->validate([
+            'img_1'=>'required|image'
+        ]);
+
+        $data = ($request->all());
+        if($request->hasFile('img_1')){
+            $path = $request->img_1->store('catalogue','public');
+        }else{
+            return response([
+                "response"=>'500',
+                "success"=>false,
+            ]);
+        }
+
+        $data['img_1']=$path;
+        Equipment::insert($data);
+
+        return response([
+            "data"=>$data,
+            "messagge"=>'Equipo agregado',
+            "response"=>'200',
+            "success"=>true,
+        ]);
     }
 
     /**
@@ -46,7 +70,7 @@ class EquipmentController extends Controller
      */
     public function show(Equipment $equipment)
     {
-        //
+        
     }
 
     /**
