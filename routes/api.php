@@ -39,7 +39,8 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
     ////////////////////////// TOURS
     Route::post('/monthly-tour-add',[MonthlyTourController::class, 'store']);
-    Route::post('/tour-add2',[MonthlyTourController::class, 'create']);
+    Route::get('/monthly-tour-list',[MonthlyTourController::class, 'index']); 
+
 
     ///////////////////////// CATALOGUE
     Route::post('/catalogue-add',[TourCatalogueController::class, 'store']); 
