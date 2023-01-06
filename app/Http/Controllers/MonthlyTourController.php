@@ -14,7 +14,8 @@ class MonthlyTourController extends Controller
      */
     public function index()
     {
-        //
+        return (MonthlyTour::all());
+
     }
 
     /**
@@ -35,15 +36,15 @@ class MonthlyTourController extends Controller
      */
     public function store(Request $request)
     {
+       
+        $data = ($request->all());
         $request->validate([
             'img_1'=>'required|image',
             'img_2'=>'required|image',
         ]);
-
-        $data = ($request->all());
         if($request->hasFile('img_1')|| $request->hasFile('img_2')){
-            $path1=$request->img_1->store('catalogue','public');
-            $path2=$request->img_2->store('catalogue','public');
+            $path1=$request->img_1->store('monthly','public');
+            $path2=$request->img_2->store('monthly','public');
         }else{
             return response([
                 "response"=>'500',
