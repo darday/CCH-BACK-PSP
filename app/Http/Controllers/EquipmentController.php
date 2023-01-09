@@ -12,9 +12,9 @@ class EquipmentController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function equipmentList()
     {
-        //
+        return(Equipment::all());
     }
 
     /**

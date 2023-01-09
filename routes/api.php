@@ -52,6 +52,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
     ///////////////////////// EQUIPMENT
     Route::post('/equipment-add',[EquipmentController::class, 'store']);
+    Route::get('/equipment-list',[EquipmentController::class, 'equipmentList']);
 
 
 
