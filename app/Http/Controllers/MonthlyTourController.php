@@ -110,4 +110,10 @@ class MonthlyTourController extends Controller
     {
         //
     }
+
+    public function showMonthlyTour($id)
+    {
+        $tour =  MonthlyTour::where('monthly_tour_id',$id)->get();
+        return($tour);
+    }
 }

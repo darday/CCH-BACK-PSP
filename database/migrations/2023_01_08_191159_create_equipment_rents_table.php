@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateMonthlyToursTable extends Migration
+class CreateEquipmentRentsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,30 +13,22 @@ class CreateMonthlyToursTable extends Migration
      */
     public function up()
     {
-        Schema::create('monthly_tours', function (Blueprint $table) {
-            $table->id('monthly_tour_id');
-            $table->string('tour_name');
-            $table->string('tour_destiny');
+        Schema::create('equipment_rents', function (Blueprint $table) {
+            $table->id('equipment_rent_id');
+            $table->string('name');
             $table->text('description');
-            $table->text('include');
+            $table->float('cost');
             $table->string('img_1');
-            $table->string('img_2');
             $table->boolean('state');
             $table->string('type');
-            $table->string('dificulty');
-            $table->float('person_cost');
-            $table->float('group_cost');
             $table->float('discount');
-            $table->float('income')->nullable();
-            $table->float('egress')->nullable();
-            $table->float('utility')->nullable();
+            $table->string('discount_description');
             $table->string('contact_phone');
             $table->string('messagge_for_contact');
-            $table->date('departure_date');
-            $table->date('return_date');
             $table->string('varchar_1')->nullable();
             $table->string('varchar_2')->nullable();
             $table->string('varchar_3')->nullable();
+            $table->integer('last_user')->nullable();
             $table->timestamps();
         });
     }
@@ -48,6 +40,6 @@ class CreateMonthlyToursTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('monthly_tours');
+        Schema::dropIfExists('equipment_rents');
     }
 }
