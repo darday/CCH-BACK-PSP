@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\tour_catalogue;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+
+// use Illuminat\Support\Facades\Storage;
 
 class TourCatalogueController extends Controller
 {
@@ -14,7 +17,7 @@ class TourCatalogueController extends Controller
      */
     public function index()
     {
-        return(tour_Catalogue::all());
+        return (tour_Catalogue::all());
     }
 
     /**
@@ -36,33 +39,32 @@ class TourCatalogueController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'img_1'=>'required|image',
-            'img_2'=>'required|image'
+            'img_1' => 'required|image',
+            'img_2' => 'required|image'
         ]);
 
-        $data = ( $request->all());
-        if($request->hasFile('img_1') || $request->hasFile('img_2')){
-            $path1 = $request->img_1->store('catalogue','public');
-            $path2 = $request->img_2->store('catalogue','public');
-        }else{
+        $data = ($request->all());
+        if ($request->hasFile('img_1') || $request->hasFile('img_2')) {
+            $path1 = $request->img_1->store('catalogue', 'public');
+            $path2 = $request->img_2->store('catalogue', 'public');
+        } else {
             return response([
-                "response"=>'500',
-                "success"=>false,
-                
+                "response" => '500',
+                "success" => false,
+
             ]);
         }
-        $data['img_1']=$path1;
-        $data['img_2']=$path2;
+        $data['img_1'] = $path1;
+        $data['img_2'] = $path2;
         tour_catalogue::insert($data);
-        
+
         return response([
-            "data"=>$data,
-            "messagge"=>'Tour Agregado a Catálogo',
-            "response"=>200,
-            "success"=>true,
-            
+            "data" => $data,
+            "messagge" => 'Tour Agregado a Catálogo',
+            "response" => 200,
+            "success" => true,
+
         ]);
-        
     }
 
     /**
@@ -94,9 +96,42 @@ class TourCatalogueController extends Controller
      * @param  \App\Models\tour_catalogue  $tour_catalogue
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, tour_catalogue $tour_catalogue)
+    public function update(Request $request, $id)
     {
-        //
+        
+
+        $request->validate([
+            'img_1' => 'required|image',
+            'img_2' => 'required|image'
+        ]);
+        
+        $data = ($request->all());
+        if ($request->hasFile('img_1') || $request->hasFile('img_2')) {
+            $tour =  tour_catalogue::where('tour_catalogues_id', $id)->firstOrFail();
+            Storage::delete('public/'.$tour->img_1);
+            Storage::delete('public/'.$tour->img_2);
+
+            $path1 = $request->img_1->store('catalogue', 'public');
+            $path2 = $request->img_2->store('catalogue', 'public');
+        } else {
+            return response([
+                "response" => '500',
+                "success" => false,
+
+            ]);
+        }
+        $data['img_1'] = $path1;
+        $data['img_2'] = $path2;
+
+        tour_catalogue::where('tour_catalogues_id',$id)->update($data);
+
+        return response([
+            "data" => $data,
+            "messagge" => 'Tour Actualizado Exitosamente',
+            "response" => 200,
+            "success" => true,
+
+        ]);
     }
 
     /**
@@ -105,14 +140,20 @@ class TourCatalogueController extends Controller
      * @param  \App\Models\tour_catalogue  $tour_catalogue
      * @return \Illuminate\Http\Response
      */
-    public function destroy(tour_catalogue $tour_catalogue)
+    public function destroy($id)
     {
-        //
+        tour_catalogue::where('tour_catalogues_id', $id)->delete();
+        return response([
+            "messagge" => 'Tour Eliminado Exitosamente',
+            "response" => 200,
+            "success" => true,
+
+        ]);
     }
 
     public function showTour($id)
     {
-        $tour =  tour_catalogue::where('tour_catalogues_id',$id)->get();
-        return($tour);
+        $tour =  tour_catalogue::where('tour_catalogues_id', $id)->get();
+        return ($tour);
     }
 }
