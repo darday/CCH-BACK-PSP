@@ -94,9 +94,9 @@ class TourCatalogueController extends Controller
      * @param  \App\Models\tour_catalogue  $tour_catalogue
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, tour_catalogue $tour_catalogue)
     {
-        return $id;
+        //
     }
 
     /**
@@ -105,15 +105,9 @@ class TourCatalogueController extends Controller
      * @param  \App\Models\tour_catalogue  $tour_catalogue
      * @return \Illuminate\Http\Response
      */
-    public function destroy( $id)
+    public function destroy(tour_catalogue $tour_catalogue)
     {
-        tour_catalogue::where('tour_catalogues_id',$id)->delete();
-        return response([
-            "messagge"=>'Tour Eliminado Exitosamente',
-            "response"=>200,
-            "success"=>true,
-            
-        ]);
+        //
     }
 
     public function showTour($id)

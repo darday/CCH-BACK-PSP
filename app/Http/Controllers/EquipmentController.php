@@ -91,9 +91,19 @@ class EquipmentController extends Controller
      * @param  \App\Models\Equipment  $equipment
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Equipment $equipment)
+    public function update(Request $request, $id)
     {
-        //
+        return ($request);
+         $equipment = Equipment::where('equipment_id', $id)->update();
+         return($equipment);
+
+       // $equipment = Equipment::where('equipment_id', $id)->update();
+         //$equipment = Equipment::findOrFail($request->id);
+        //  $equipment-> name ;
+        //  $equipment->save();
+        // return($equipment);
+
+       // return($id);
     }
 
     /**
@@ -102,8 +112,29 @@ class EquipmentController extends Controller
      * @param  \App\Models\Equipment  $equipment
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Equipment $equipment)
+    public function destroy($id)
     {
-        //
+        $equipment = Equipment::where('equipment_id', $id)->delete();
+        if($equipment == 1){
+        return([
+            "messagge"=>'Equipo eliminado exitosamente',
+            "response"=>'200',
+            "success"=>true,
+        ]);
+        }else{
+            return([
+                "messagge"=>'Equipo ya eliminado',
+                "response"=>'500',
+                "success"=>false,
+            ]);
+        }
+        
+    }
+
+    public function showequipment($equipment)
+    {
+        $equip = Equipment::where('equipment_id', $equipment)->get();
+        return($equip); 
+
     }
 }
