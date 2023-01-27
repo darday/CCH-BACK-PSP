@@ -98,32 +98,30 @@ class TourCatalogueController extends Controller
      */
     public function update(Request $request, $id)
     {
-        
 
-        $request->validate([
-            'img_1' => 'required|image',
-            'img_2' => 'required|image'
-        ]);
-        
+
+        // $request->validate([
+        //     'img_1' => 'required|image',
+        //     'img_2' => 'required|image'
+        // ]);
+
         $data = ($request->all());
-        if ($request->hasFile('img_1') || $request->hasFile('img_2')) {
+        if ($request->hasFile('img_1')) {
             $tour =  tour_catalogue::where('tour_catalogues_id', $id)->firstOrFail();
-            Storage::delete('public/'.$tour->img_1);
-            Storage::delete('public/'.$tour->img_2);
-
+            Storage::delete('public/' . $tour->img_1);
             $path1 = $request->img_1->store('catalogue', 'public');
-            $path2 = $request->img_2->store('catalogue', 'public');
-        } else {
-            return response([
-                "response" => '500',
-                "success" => false,
-
-            ]);
+            $data['img_1'] = $path1;
         }
-        $data['img_1'] = $path1;
-        $data['img_2'] = $path2;
+        if ($request->hasFile('img_2')) {
+            $tour =  tour_catalogue::where('tour_catalogues_id', $id)->firstOrFail();
+            Storage::delete('public/' . $tour->img_2);
+            $path2 = $request->img_2->store('catalogue', 'public');
+            $data['img_2'] = $path2;
+        }
 
-        tour_catalogue::where('tour_catalogues_id',$id)->update($data);
+
+
+        tour_catalogue::where('tour_catalogues_id', $id)->update($data);
 
         return response([
             "data" => $data,
@@ -142,6 +140,9 @@ class TourCatalogueController extends Controller
      */
     public function destroy($id)
     {
+        $tour =  tour_catalogue::where('tour_catalogues_id', $id)->firstOrFail();
+        Storage::delete('public/' . $tour->img_1);
+        Storage::delete('public/' . $tour->img_2);
         tour_catalogue::where('tour_catalogues_id', $id)->delete();
         return response([
             "messagge" => 'Tour Eliminado Exitosamente',
