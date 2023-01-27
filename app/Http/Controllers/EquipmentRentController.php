@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\EquipmentRent;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class EquipmentRentController extends Controller
 {
@@ -14,7 +15,7 @@ class EquipmentRentController extends Controller
      */
     public function index()
     {
-        //
+        return (EquipmentRent::all());
     }
 
     /**
@@ -35,7 +36,29 @@ class EquipmentRentController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request -> validate([
+            'img_1' => "required|image"
+        ]);
+
+        $data = ($request->all());
+        if($request ->hasFile('img_1')){
+            $path = $request->img_1->store('equipment', 'public');
+        } else {
+            return ([
+                "Response" => '500',
+                "Success" => false
+            ]);
+        }
+
+        $data ['img_1']=$path;
+        EquipmentRent::insert($data);
+
+        return ([
+            "Information" => $data,
+            "messagge" => 'Equipo de alquiler agregado exitosamente',
+            "Response" => '200',
+            "Success" => true
+        ]);
     }
 
     /**
@@ -44,9 +67,14 @@ class EquipmentRentController extends Controller
      * @param  \App\Models\EquipmentRent  $equipmentRent
      * @return \Illuminate\Http\Response
      */
-    public function show(EquipmentRent $equipmentRent)
+    public function showequipmentrent($equipmentRent)
     {
-        //
+        $equipRent = EquipmentRent::where('equipment_rent_id', $equipmentRent)->get();
+        return([
+            "Information"=>$equipRent,
+            "Message"=>'Informacion exitosa',
+            "Response"=>'200',
+        ]);
     }
 
     /**
@@ -67,9 +95,32 @@ class EquipmentRentController extends Controller
      * @param  \App\Models\EquipmentRent  $equipmentRent
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, EquipmentRent $equipmentRent)
+    public function update(Request $request, $id)
     {
-        //
+        $request -> validate([
+            'img_1' => 'required|image'
+        ]);
+
+        $inf = ($request->all());
+        if($request->hasFile('img_1')){
+            $infEquipRent = EquipmentRent::where('equipment_rent_id', $id)->firstOrFail();
+            Storage::delete('public/'.$infEquipRent->img_1);
+            $path = $request->img_1->store('equipment', 'public');
+        }else{
+            return([
+                "Response"=>'500',
+                "Success"=>false
+            ]);
+        }
+
+        $inf['img_1'] = $path;
+        EquipmentRent::where('equipment_rent_id', $id)->update($inf);
+        return([
+            "Information" => $inf,
+            "Messagge" => 'Equipo actualizado con exito',
+            "Response" => 200,
+            "Success" => True
+        ]);
     }
 
     /**
@@ -78,8 +129,21 @@ class EquipmentRentController extends Controller
      * @param  \App\Models\EquipmentRent  $equipmentRent
      * @return \Illuminate\Http\Response
      */
-    public function destroy(EquipmentRent $equipmentRent)
+    public function destroy($id)
     {
-        //
+        $equipRent = EquipmentRent::where('equipment_rent_id', $id)->delete();
+        if($equipRent == 1){
+            return([
+                "Message"=>'Equipo de alquiler eliminado exitosamente',
+                "Response"=> '200',
+                "Success"=>true
+            ]);
+        }else{
+            return([
+                "Message"=>'Equipo de alquiler no eliminado',
+                "Response"=>'500',
+                "Success"=> false
+            ]);
+        }
     }
 }

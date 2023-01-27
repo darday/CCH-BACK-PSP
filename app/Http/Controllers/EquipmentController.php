@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Equipment;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class EquipmentController extends Controller
 {
@@ -43,7 +44,7 @@ class EquipmentController extends Controller
 
         $data = ($request->all());
         if($request->hasFile('img_1')){
-            $path = $request->img_1->store('catalogue','public');
+            $path = $request->img_1->store('equipment','public');
         }else{
             return response([
                 "response"=>'500',
@@ -93,17 +94,34 @@ class EquipmentController extends Controller
      */
     public function update(Request $request, $id)
     {
-        return ($request);
-         $equipment = Equipment::where('equipment_id', $id)->update();
-         return($equipment);
+        $request -> validate([
+            'img_1' => 'required|image'
+        ]);
 
-       // $equipment = Equipment::where('equipment_id', $id)->update();
-         //$equipment = Equipment::findOrFail($request->id);
-        //  $equipment-> name ;
-        //  $equipment->save();
-        // return($equipment);
+        $data = ($request ->all());
+        if($request -> hasFile('img_1')){
+            $dataEquipment = Equipment::where('equipment_id', $id)->firstOrFail();
+            Storage::delete('public/'.$dataEquipment->img_1);
 
-       // return($id);
+            $path = $request->img_1->store('equipment', 'public');
+        }else{
+            return ([
+                "Response" => '500',
+                "Succes" => false
+            ]);
+        }
+
+        $data['img_1'] = $path;
+
+        Equipment::where('equipment_id', $id)->update($data);
+
+        return ([
+            "Information" => $data,
+            "Messagge" => 'Equipo actualizado con exito',
+            "Response" => 200,
+            "Success" => True
+        ]);
+
     }
 
     /**

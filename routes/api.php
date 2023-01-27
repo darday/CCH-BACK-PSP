@@ -4,10 +4,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\EquipmentController;
+use App\Http\Controllers\EquipmentRentController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\MonthlyTourController;
 use App\Http\Controllers\TourCatalogueController;
-
+use App\Models\EquipmentRent;
 
 /*
 |--------------------------------------------------------------------------
@@ -56,6 +57,13 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     Route::get('/equipment-show/{equipment}',[EquipmentController::class, 'showequipment']);
     Route::post('/equipment-delete/{equipment}',[EquipmentController::class, 'destroy']);
     Route::post('/equipment-update/{equipment}',[EquipmentController::class, 'update']);
+
+    ///////////////////////// EQUIPMENT RENT
+    Route::post('/equipment-rent-add',[EquipmentRentController::class, 'store']);
+    Route::get('/equipment-rent-list',[EquipmentRentController::class, 'index']);
+    Route::get('/equipment-rent-show/{equipmentRent}',[EquipmentRentController::class, 'showequipmentrent']);
+    Route::post('/equipment-rent-delete/{equipmentRent}',[EquipmentRentController::class, 'destroy']);
+    Route::post('/equipment-rent-update/{equipmentRent}',[EquipmentRentController::class, 'update']);
 
 
 
