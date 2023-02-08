@@ -6,6 +6,10 @@ use App\Models\MonthlyTour;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
+use Intervention\Image\Facades\Image;
+use Illuminate\Support\Str;
+
+
 class MonthlyTourController extends Controller
 {
     /**
@@ -43,8 +47,34 @@ class MonthlyTourController extends Controller
             'img_2' => 'required|image',
         ]);
         if ($request->hasFile('img_1') || $request->hasFile('img_2')) {
-            $path1 = $request->img_1->store('monthly', 'public');
-            $path2 = $request->img_2->store('monthly', 'public');
+            // $path1 = $request->img_1->store('monthly', 'public');
+            // $path2 = $request->img_2->store('monthly', 'public');
+            $name_img = Str::random(10) . $request->file('img_1')->getClientOriginalName();
+            $ruta = storage_path() . '\app\public\monthly/' . $name_img;
+            $img = Image::make($request->file('img_1'));
+            $img->orientate();
+            $img->resize(1200, null, function ($constraint) {
+                    $constraint->aspectRatio();
+                })->save($ruta);
+            $img->destroy();
+
+
+            $path1='monthly/'.$name_img;
+            $data['img_1'] = $path1;
+
+            $name_img = Str::random(10) . $request->file('img_2')->getClientOriginalName();
+            $ruta = storage_path() . '\app\public\monthly/' . $name_img;
+            $img = Image::make($request->file('img_2'));
+            $img->orientate();
+            $img->resize(1200, null, function ($constraint) {
+                    $constraint->aspectRatio();
+                })->save($ruta);
+            $img->destroy();
+
+
+            $path2='monthly/'.$name_img;
+            $data['img_2'] = $path2;
+
         } else {
             return response([
                 "response" => '500',
@@ -100,19 +130,43 @@ class MonthlyTourController extends Controller
         if ($request->hasFile('img_1')) {
             $tour =  MonthlyTour::where('monthly_tour_id', $id)->firstOrFail();
             Storage::delete('public/' . $tour->img_1);
-            $path1 = $request->img_1->store('catalogue', 'public');
+            // $path1 = $request->img_1->store('Monthly', 'public');
+            // $data['img_1'] = $path1;
+            $name_img = Str::random(10) . $request->file('img_1')->getClientOriginalName();
+            $ruta = storage_path() . '\app\public\monthly/' . $name_img;
+            $img = Image::make($request->file('img_1'));
+            $img->orientate();
+            $img->resize(1200, null, function ($constraint) {
+                    $constraint->aspectRatio();
+                })->save($ruta);
+            $img->destroy();
+
+
+            $path1='monthly/'.$name_img;
             $data['img_1'] = $path1;
         }
         if ($request->hasFile('img_2')) {
             $tour =  MonthlyTour::where('monthly_tour_id', $id)->firstOrFail();
             Storage::delete('public/' . $tour->img_2);
-            $path2 = $request->img_2->store('catalogue', 'public');
+            // $path2 = $request->img_2->store('monthly', 'public');
+            // $data['img_2'] = $path2;
+            $name_img = Str::random(10) . $request->file('img_2')->getClientOriginalName();
+            $ruta = storage_path() . '\app\public\monthly/' . $name_img;
+            $img = Image::make($request->file('img_2'));
+            $img->orientate();
+            $img->resize(1200, null, function ($constraint) {
+                    $constraint->aspectRatio();
+                })->save($ruta);
+            $img->destroy();
+
+
+            $path2='monthly/'.$name_img;
             $data['img_2'] = $path2;
         }
 
 
 
-        MonthlyTour::where('monthly_tour_id', $id)->update($data);
+        $res = MonthlyTour::where('monthly_tour_id', $id)->update($data);
 
         return response([
             "data" => $data,
@@ -121,6 +175,23 @@ class MonthlyTourController extends Controller
             "success" => true,
 
         ]);
+        
+        if($res==1){
+            return response([
+                "data" => $data,
+                "messagge" => 'Tour Mensual Actualizado Exitosamente',
+                "response" => 200,
+                "success" => true,
+    
+            ]);
+        }else{
+            return response([
+                "messagge" => 'Error: Tour Mensual No Actualizado ',
+                "response" => 200,
+                "success" => false,
+    
+            ]);
+        }
     }
 
     /**

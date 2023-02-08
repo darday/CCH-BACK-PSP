@@ -6,7 +6,8 @@ use App\Models\tour_catalogue;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
-// use Illuminat\Support\Facades\Storage;
+use Intervention\Image\Facades\Image;
+use Illuminate\Support\Str;
 
 class TourCatalogueController extends Controller
 {
@@ -45,8 +46,33 @@ class TourCatalogueController extends Controller
 
         $data = ($request->all());
         if ($request->hasFile('img_1') || $request->hasFile('img_2')) {
-            $path1 = $request->img_1->store('catalogue', 'public');
-            $path2 = $request->img_2->store('catalogue', 'public');
+            // $path1 = $request->img_1->store('catalogue', 'public');
+            // $path2 = $request->img_2->store('catalogue', 'public');
+            $name_img = Str::random(10) . $request->file('img_1')->getClientOriginalName();
+            $ruta = storage_path() . '\app\public\catalogue/' . $name_img;
+            $img = Image::make($request->file('img_1'));
+            $img->orientate();
+            $img->resize(1200, null, function ($constraint) {
+                    $constraint->aspectRatio();
+                })->save($ruta);
+            $img->destroy();
+
+
+            $path1='catalogue/'.$name_img;
+            $data['img_1'] = $path1;
+
+            $name_img = Str::random(10) . $request->file('img_2')->getClientOriginalName();
+            $ruta = storage_path() . '\app\public\catalogue/' . $name_img;
+            $img = Image::make($request->file('img_2'));
+            $img->orientate();
+            $img->resize(1200, null, function ($constraint) {
+                    $constraint->aspectRatio();
+                })->save($ruta);
+            $img->destroy();
+
+
+            $path2='catalogue/'.$name_img;
+            $data['img_2'] = $path2;
         } else {
             return response([
                 "response" => '500',
@@ -54,6 +80,8 @@ class TourCatalogueController extends Controller
 
             ]);
         }
+
+
         $data['img_1'] = $path1;
         $data['img_2'] = $path2;
         tour_catalogue::insert($data);
@@ -109,27 +137,62 @@ class TourCatalogueController extends Controller
         if ($request->hasFile('img_1')) {
             $tour =  tour_catalogue::where('tour_catalogues_id', $id)->firstOrFail();
             Storage::delete('public/' . $tour->img_1);
-            $path1 = $request->img_1->store('catalogue', 'public');
+            // $path1 = $request->img_1->store('catalogue', 'public');
+            // $data['img_1'] = $path1;
+            $name_img = Str::random(10) . $request->file('img_1')->getClientOriginalName();
+            $ruta = storage_path() . '\app\public\catalogue/' . $name_img;
+            $img = Image::make($request->file('img_1'));
+            $img->orientate();
+            $img->resize(1200, null, function ($constraint) {
+                    $constraint->aspectRatio();
+                })->save($ruta);
+            $img->destroy();
+
+
+            $path1='catalogue/'.$name_img;
             $data['img_1'] = $path1;
+
         }
         if ($request->hasFile('img_2')) {
             $tour =  tour_catalogue::where('tour_catalogues_id', $id)->firstOrFail();
             Storage::delete('public/' . $tour->img_2);
-            $path2 = $request->img_2->store('catalogue', 'public');
+            // $path2 = $request->img_2->store('catalogue', 'public');
+            // $data['img_2'] = $path2;
+            $name_img = Str::random(10) . $request->file('img_2')->getClientOriginalName();
+            $ruta = storage_path() . '\app\public\catalogue/' . $name_img;
+            $img = Image::make($request->file('img_2'));
+            $img->orientate();
+            $img->resize(1200, null, function ($constraint) {
+                    $constraint->aspectRatio();
+                })->save($ruta);
+            $img->destroy();
+
+
+            $path2='catalogue/'.$name_img;
             $data['img_2'] = $path2;
         }
 
 
 
-        tour_catalogue::where('tour_catalogues_id', $id)->update($data);
+        $res = tour_catalogue::where('tour_catalogues_id', $id)->update($data);
+        if($res==1){
+            return response([
+                "data" => $data,
+                "messagge" => 'Tour Actualizado Exitosamente',
+                "response" => 200,
+                "success" => true,
+    
+            ]);
+        }else{
+            return response([
+                "messagge" => 'Error: Tour No Actualizado ',
+                "response" => 200,
+                "success" => false,
+    
+            ]);
+        }
 
-        return response([
-            "data" => $data,
-            "messagge" => 'Tour Actualizado Exitosamente',
-            "response" => 200,
-            "success" => true,
-
-        ]);
+        
     }
 
     /**

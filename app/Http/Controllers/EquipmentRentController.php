@@ -6,6 +6,10 @@ use App\Models\EquipmentRent;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
+use Intervention\Image\Facades\Image;
+use Illuminate\Support\Str;
+
+
 class EquipmentRentController extends Controller
 {
     /**
@@ -36,29 +40,50 @@ class EquipmentRentController extends Controller
      */
     public function store(Request $request)
     {
-        $request -> validate([
+        $request->validate([
             'img_1' => "required|image"
         ]);
 
         $data = ($request->all());
-        if($request ->hasFile('img_1')){
-            $path = $request->img_1->store('equipment', 'public');
+        if ($request->hasFile('img_1')) {
+            // $path = $request->img_1->store('equipmentRent','public');
+            $name_img = Str::random(10) . $request->file('img_1')->getClientOriginalName();
+            $ruta = storage_path() . '\app\public\equipment/' . $name_img;
+            $img = Image::make($request->file('img_1'));
+            $img->orientate();
+            $img->resize(1200, null, function ($constraint) {
+                $constraint->aspectRatio();
+            })->save($ruta);
+            $img->destroy();
+
+
+            $path1 = 'equipment/' . $name_img;
+            $data['img_1'] = $path1;
         } else {
-            return ([
-                "Response" => '500',
-                "Success" => false
+            return response([
+                "response" => '500',
+                "success" => false,
             ]);
         }
 
-        $data ['img_1']=$path;
-        EquipmentRent::insert($data);
+        $res = EquipmentRent::insert($data);
 
-        return ([
-            "Information" => $data,
-            "messagge" => 'Equipo de alquiler agregado exitosamente',
-            "Response" => '200',
-            "Success" => true
-        ]);
+        if ($res == 1) {
+            return response([
+                "data" => $data,
+                "messagge" => 'Equipo agregado Exitosamente',
+                "response" => 200,
+                "success" => true,
+
+            ]);
+        } else {
+            return response([
+                "messagge" => 'Error: Equipo No Agregado ',
+                "response" => 200,
+                "success" => false,
+
+            ]);
+        }
     }
 
     /**
@@ -67,13 +92,13 @@ class EquipmentRentController extends Controller
      * @param  \App\Models\EquipmentRent  $equipmentRent
      * @return \Illuminate\Http\Response
      */
-    public function showequipmentrent($equipmentRent)
+    public function showequipmentRent($equipmentRent)
     {
-        $equipRent = EquipmentRent::where('equipment_rent_id', $equipmentRent)->get();
-        return([
-            "Information"=>$equipRent,
-            "Message"=>'Informacion exitosa',
-            "Response"=>'200',
+        $equipRent = EquipmentRent::where('equipmentRent_rent_id', $equipmentRent)->get();
+        return ([
+            "Information" => $equipRent,
+            "Message" => 'Informacion exitosa',
+            "Response" => '200',
         ]);
     }
 
@@ -97,25 +122,25 @@ class EquipmentRentController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $request -> validate([
+        $request->validate([
             'img_1' => 'required|image'
         ]);
 
         $inf = ($request->all());
-        if($request->hasFile('img_1')){
-            $infEquipRent = EquipmentRent::where('equipment_rent_id', $id)->firstOrFail();
-            Storage::delete('public/'.$infEquipRent->img_1);
-            $path = $request->img_1->store('equipment', 'public');
-        }else{
-            return([
-                "Response"=>'500',
-                "Success"=>false
+        if ($request->hasFile('img_1')) {
+            $infEquipRent = EquipmentRent::where('equipmentRent_rent_id', $id)->firstOrFail();
+            Storage::delete('public/' . $infEquipRent->img_1);
+            $path = $request->img_1->store('equipmentRent', 'public');
+        } else {
+            return ([
+                "Response" => '500',
+                "Success" => false
             ]);
         }
 
         $inf['img_1'] = $path;
-        EquipmentRent::where('equipment_rent_id', $id)->update($inf);
-        return([
+        EquipmentRent::where('equipmentRent_rent_id', $id)->update($inf);
+        return ([
             "Information" => $inf,
             "Messagge" => 'Equipo actualizado con exito',
             "Response" => 200,
@@ -131,18 +156,18 @@ class EquipmentRentController extends Controller
      */
     public function destroy($id)
     {
-        $equipRent = EquipmentRent::where('equipment_rent_id', $id)->delete();
-        if($equipRent == 1){
-            return([
-                "Message"=>'Equipo de alquiler eliminado exitosamente',
-                "Response"=> '200',
-                "Success"=>true
+        $equipRent = EquipmentRent::where('equipmentRent_rent_id', $id)->delete();
+        if ($equipRent == 1) {
+            return ([
+                "Message" => 'Equipo de alquiler eliminado exitosamente',
+                "Response" => '200',
+                "Success" => true
             ]);
-        }else{
-            return([
-                "Message"=>'Equipo de alquiler no eliminado',
-                "Response"=>'500',
-                "Success"=> false
+        } else {
+            return ([
+                "Message" => 'Equipo de alquiler no eliminado',
+                "Response" => '500',
+                "Success" => false
             ]);
         }
     }

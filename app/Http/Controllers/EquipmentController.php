@@ -6,6 +6,9 @@ use App\Models\Equipment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
+use Intervention\Image\Facades\Image;
+use Illuminate\Support\Str;
+
 class EquipmentController extends Controller
 {
     /**
@@ -15,7 +18,9 @@ class EquipmentController extends Controller
      */
     public function equipmentList()
     {
-        return(Equipment::all());
+        $results = Equipment::orderBy('name','asc')->get();
+
+        return($results);
     }
 
     /**
@@ -44,7 +49,19 @@ class EquipmentController extends Controller
 
         $data = ($request->all());
         if($request->hasFile('img_1')){
-            $path = $request->img_1->store('equipment','public');
+            // $path = $request->img_1->store('equipment','public');
+            $name_img = Str::random(10) . $request->file('img_1')->getClientOriginalName();
+            $ruta = storage_path() . '\app\public\equipment/' . $name_img;
+            $img = Image::make($request->file('img_1'));
+            $img->orientate();
+            $img->resize(1200, null, function ($constraint) {
+                    $constraint->aspectRatio();
+                })->save($ruta);
+            $img->destroy();
+
+
+            $path1='equipment/'.$name_img;
+            $data['img_1'] = $path1;
         }else{
             return response([
                 "response"=>'500',
@@ -52,15 +69,24 @@ class EquipmentController extends Controller
             ]);
         }
 
-        $data['img_1']=$path;
-        Equipment::insert($data);
+        $res = Equipment::insert($data);
 
-        return response([
-            "data"=>$data,
-            "messagge"=>'Equipo agregado',
-            "response"=>'200',
-            "success"=>true,
-        ]);
+        if($res==1){
+            return response([
+                "data" => $data,
+                "messagge" => 'Equipo agregado Exitosamente',
+                "response" => 200,
+                "success" => true,
+    
+            ]);
+        }else{
+            return response([
+                "messagge" => 'Error: Equipo No Agregado ',
+                "response" => 200,
+                "success" => false,
+    
+            ]);
+        }
     }
 
     /**
@@ -94,34 +120,45 @@ class EquipmentController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $request -> validate([
-            'img_1' => 'required|image'
-        ]);
 
         $data = ($request ->all());
         if($request -> hasFile('img_1')){
             $dataEquipment = Equipment::where('equipment_id', $id)->firstOrFail();
             Storage::delete('public/'.$dataEquipment->img_1);
+            // $path = $request->img_1->store('equipment', 'public');
+            $name_img = Str::random(10) . $request->file('img_1')->getClientOriginalName();
+            $ruta = storage_path() . '\app\public\equipment/' . $name_img;
+            $img = Image::make($request->file('img_1'));
+            $img->orientate();
+            $img->resize(1200, null, function ($constraint) {
+                    $constraint->aspectRatio();
+                })->save($ruta);
+            $img->destroy();
 
-            $path = $request->img_1->store('equipment', 'public');
+
+            $path1='equipment/'.$name_img;
+            $data['img_1'] = $path1;
+        }
+        // $data['img_1'] = $path;
+
+        $res = Equipment::where('equipment_id', $id)->update($data);
+
+        if($res==1){
+            return response([
+                "data" => $data,
+                "messagge" => 'Tour Actualizado Exitosamente',
+                "response" => 200,
+                "success" => true,
+    
+            ]);
         }else{
-            return ([
-                "Response" => '500',
-                "Succes" => false
+            return response([
+                "messagge" => 'Error: Tour No Actualizado ',
+                "response" => 200,
+                "success" => false,
+    
             ]);
         }
-
-        $data['img_1'] = $path;
-
-        Equipment::where('equipment_id', $id)->update($data);
-
-        return ([
-            "Information" => $data,
-            "Messagge" => 'Equipo actualizado con exito',
-            "Response" => 200,
-            "Success" => True
-        ]);
-
     }
 
     /**
@@ -132,8 +169,10 @@ class EquipmentController extends Controller
      */
     public function destroy($id)
     {
-        $equipment = Equipment::where('equipment_id', $id)->delete();
-        if($equipment == 1){
+        $equipment =  Equipment::where('equipment_id', $id)->firstOrFail();
+        Storage::delete('public/' . $equipment->img_1);
+        $resp = Equipment::where('equipment_id', $id)->delete();
+        if($resp == 1){
         return([
             "messagge"=>'Equipo eliminado exitosamente',
             "response"=>'200',
