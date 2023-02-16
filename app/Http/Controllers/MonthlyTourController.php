@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\MonthlyTour;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -84,15 +85,29 @@ class MonthlyTourController extends Controller
 
         $data['img_1'] = $path1;
         $data['img_2'] = $path2;
+        $data['created_at'] = Carbon::now();
 
-        MonthlyTour::insert($data);
 
-        return response([
-            "data" => $data,
-            "messagge" => "Tour Agregado Correctamente",
-            "response" => 200,
-            "success" => true,
-        ]);
+        $res=MonthlyTour::insert($data);
+
+        if ($res == 1) {
+            return response([
+                "data" => $data,
+                "messagge" => 'Tour Agregado Exitosamente.',
+                "response" => 200,
+                "success" => true,
+
+            ]);
+        }else{
+            return response([
+                "data" => $data,
+                "messagge" => 'Error Tour No Agregado.',
+                "response" => 500,
+                "success" => false,
+
+            ]);
+        }
+
     }
 
     /**

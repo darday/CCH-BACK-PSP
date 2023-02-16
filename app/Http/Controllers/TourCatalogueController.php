@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\tour_catalogue;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -53,12 +54,12 @@ class TourCatalogueController extends Controller
             $img = Image::make($request->file('img_1'));
             $img->orientate();
             $img->resize(1200, null, function ($constraint) {
-                    $constraint->aspectRatio();
-                })->save($ruta);
+                $constraint->aspectRatio();
+            })->save($ruta);
             $img->destroy();
 
 
-            $path1='catalogue/'.$name_img;
+            $path1 = 'catalogue/' . $name_img;
             $data['img_1'] = $path1;
 
             $name_img = Str::random(10) . $request->file('img_2')->getClientOriginalName();
@@ -66,12 +67,12 @@ class TourCatalogueController extends Controller
             $img = Image::make($request->file('img_2'));
             $img->orientate();
             $img->resize(1200, null, function ($constraint) {
-                    $constraint->aspectRatio();
-                })->save($ruta);
+                $constraint->aspectRatio();
+            })->save($ruta);
             $img->destroy();
 
 
-            $path2='catalogue/'.$name_img;
+            $path2 = 'catalogue/' . $name_img;
             $data['img_2'] = $path2;
         } else {
             return response([
@@ -84,15 +85,26 @@ class TourCatalogueController extends Controller
 
         $data['img_1'] = $path1;
         $data['img_2'] = $path2;
-        tour_catalogue::insert($data);
+        $data['created_at'] = Carbon::now();
 
-        return response([
-            "data" => $data,
-            "messagge" => 'Tour Agregado a Catálogo',
-            "response" => 200,
-            "success" => true,
+        $res = tour_catalogue::insert($data);
+        if ($res == 1) {
+            return response([
+                "data" => $data,
+                "messagge" => 'Tour Agregado a Catálogo',
+                "response" => 200,
+                "success" => true,
 
-        ]);
+            ]);
+        }else{
+            return response([
+                "data" => $data,
+                "messagge" => 'Error Tour No Agregado a Catálogo',
+                "response" => 500,
+                "success" => false,
+
+            ]);
+        }
     }
 
     /**
@@ -144,14 +156,13 @@ class TourCatalogueController extends Controller
             $img = Image::make($request->file('img_1'));
             $img->orientate();
             $img->resize(1200, null, function ($constraint) {
-                    $constraint->aspectRatio();
-                })->save($ruta);
+                $constraint->aspectRatio();
+            })->save($ruta);
             $img->destroy();
 
 
-            $path1='catalogue/'.$name_img;
+            $path1 = 'catalogue/' . $name_img;
             $data['img_1'] = $path1;
-
         }
         if ($request->hasFile('img_2')) {
             $tour =  tour_catalogue::where('tour_catalogues_id', $id)->firstOrFail();
@@ -163,36 +174,34 @@ class TourCatalogueController extends Controller
             $img = Image::make($request->file('img_2'));
             $img->orientate();
             $img->resize(1200, null, function ($constraint) {
-                    $constraint->aspectRatio();
-                })->save($ruta);
+                $constraint->aspectRatio();
+            })->save($ruta);
             $img->destroy();
 
 
-            $path2='catalogue/'.$name_img;
+            $path2 = 'catalogue/' . $name_img;
             $data['img_2'] = $path2;
         }
 
 
 
         $res = tour_catalogue::where('tour_catalogues_id', $id)->update($data);
-        if($res==1){
+        if ($res == 1) {
             return response([
                 "data" => $data,
                 "messagge" => 'Tour Actualizado Exitosamente',
                 "response" => 200,
                 "success" => true,
-    
+
             ]);
-        }else{
+        } else {
             return response([
                 "messagge" => 'Error: Tour No Actualizado ',
                 "response" => 200,
                 "success" => false,
-    
+
             ]);
         }
-
-        
     }
 
     /**

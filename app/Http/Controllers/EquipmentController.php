@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Equipment;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -68,6 +69,8 @@ class EquipmentController extends Controller
                 "success"=>false,
             ]);
         }
+        $data['created_at'] = Carbon::now();
+
 
         $res = Equipment::insert($data);
 

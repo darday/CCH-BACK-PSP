@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\EquipmentRent;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -65,6 +66,8 @@ class EquipmentRentController extends Controller
                 "success" => false,
             ]);
         }
+        $data['created_at'] = Carbon::now();
+
 
         $res = EquipmentRent::insert($data);
 
@@ -94,12 +97,9 @@ class EquipmentRentController extends Controller
      */
     public function showequipmentRent($equipmentRent)
     {
-        $equipRent = EquipmentRent::where('equipmentRent_rent_id', $equipmentRent)->get();
-        return ([
-            "Information" => $equipRent,
-            "Message" => 'Informacion exitosa',
-            "Response" => '200',
-        ]);
+        
+        $equip = EquipmentRent::where('equipment_rent_id', $equipmentRent)->get();
+        return($equip); 
     }
 
     /**
@@ -122,30 +122,32 @@ class EquipmentRentController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $request->validate([
-            'img_1' => 'required|image'
-        ]);
-
+       
         $inf = ($request->all());
         if ($request->hasFile('img_1')) {
-            $infEquipRent = EquipmentRent::where('equipmentRent_rent_id', $id)->firstOrFail();
+            $infEquipRent = EquipmentRent::where('equipment_rent_id', $id)->firstOrFail();
             Storage::delete('public/' . $infEquipRent->img_1);
             $path = $request->img_1->store('equipmentRent', 'public');
-        } else {
-            return ([
-                "Response" => '500',
-                "Success" => false
-            ]);
+            $inf['img_1'] = $path;
         }
 
-        $inf['img_1'] = $path;
-        EquipmentRent::where('equipmentRent_rent_id', $id)->update($inf);
-        return ([
-            "Information" => $inf,
-            "Messagge" => 'Equipo actualizado con exito',
-            "Response" => 200,
-            "Success" => True
-        ]);
+        $equipRent = EquipmentRent::where('equipment_rent_id', $id)->update($inf);
+        
+        if ($equipRent == 1) {
+            return ([
+                "messagge" => 'Equipo de alquiler editado exitosamente',
+                "response" => '200',
+                "success" => true
+            ]);
+        } else {
+            return ([
+                "messagge" => 'Equipo de alquiler no editado',
+                "response" => '500',
+                "success" => false
+            ]);
+        }
+        
+      
     }
 
     /**
@@ -156,7 +158,7 @@ class EquipmentRentController extends Controller
      */
     public function destroy($id)
     {
-        $equipRent = EquipmentRent::where('equipmentRent_rent_id', $id)->delete();
+        $equipRent = EquipmentRent::where('equipment_rent_id', $id)->delete();
         if ($equipRent == 1) {
             return ([
                 "Message" => 'Equipo de alquiler eliminado exitosamente',
