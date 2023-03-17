@@ -42,25 +42,33 @@ class MonthlyTourController extends Controller
     public function store(Request $request)
     {
 
+
         $data = ($request->all());
-        $request->validate([
-            'img_1' => 'required|image',
-            'img_2' => 'required|image',
-        ]);
+
+        if (!$request->hasFile('img_1') || !$request->hasFile('img_2')) {
+            return response([
+                "messagge" => 'Debe tener dos imagenes.',
+                "response" => 422,
+                "success" => false,
+
+            ]);
+        }
+
         if ($request->hasFile('img_1') || $request->hasFile('img_2')) {
             // $path1 = $request->img_1->store('monthly', 'public');
             // $path2 = $request->img_2->store('monthly', 'public');
             $name_img = Str::random(10) . $request->file('img_1')->getClientOriginalName();
+            // $ruta = storage_path() . '\app\public\monthly/' . $name_img;
             $ruta = storage_path() . '\app\public\monthly/' . $name_img;
             $img = Image::make($request->file('img_1'));
             $img->orientate();
             $img->resize(1200, null, function ($constraint) {
-                    $constraint->aspectRatio();
-                })->save($ruta);
+                $constraint->aspectRatio();
+            })->save($ruta);
             $img->destroy();
 
 
-            $path1='monthly/'.$name_img;
+            $path1 = 'monthly/' . $name_img;
             $data['img_1'] = $path1;
 
             $name_img = Str::random(10) . $request->file('img_2')->getClientOriginalName();
@@ -68,14 +76,13 @@ class MonthlyTourController extends Controller
             $img = Image::make($request->file('img_2'));
             $img->orientate();
             $img->resize(1200, null, function ($constraint) {
-                    $constraint->aspectRatio();
-                })->save($ruta);
+                $constraint->aspectRatio();
+            })->save($ruta);
             $img->destroy();
 
 
-            $path2='monthly/'.$name_img;
+            $path2 = 'monthly/' . $name_img;
             $data['img_2'] = $path2;
-
         } else {
             return response([
                 "response" => '500',
@@ -88,7 +95,7 @@ class MonthlyTourController extends Controller
         $data['created_at'] = Carbon::now();
 
 
-        $res=MonthlyTour::insert($data);
+        $res = MonthlyTour::insert($data);
 
         if ($res == 1) {
             return response([
@@ -98,7 +105,7 @@ class MonthlyTourController extends Controller
                 "success" => true,
 
             ]);
-        }else{
+        } else {
             return response([
                 "data" => $data,
                 "messagge" => 'Error Tour No Agregado.',
@@ -107,7 +114,6 @@ class MonthlyTourController extends Controller
 
             ]);
         }
-
     }
 
     /**
@@ -152,12 +158,12 @@ class MonthlyTourController extends Controller
             $img = Image::make($request->file('img_1'));
             $img->orientate();
             $img->resize(1200, null, function ($constraint) {
-                    $constraint->aspectRatio();
-                })->save($ruta);
+                $constraint->aspectRatio();
+            })->save($ruta);
             $img->destroy();
 
 
-            $path1='monthly/'.$name_img;
+            $path1 = 'monthly/' . $name_img;
             $data['img_1'] = $path1;
         }
         if ($request->hasFile('img_2')) {
@@ -170,12 +176,12 @@ class MonthlyTourController extends Controller
             $img = Image::make($request->file('img_2'));
             $img->orientate();
             $img->resize(1200, null, function ($constraint) {
-                    $constraint->aspectRatio();
-                })->save($ruta);
+                $constraint->aspectRatio();
+            })->save($ruta);
             $img->destroy();
 
 
-            $path2='monthly/'.$name_img;
+            $path2 = 'monthly/' . $name_img;
             $data['img_2'] = $path2;
         }
 
@@ -190,21 +196,21 @@ class MonthlyTourController extends Controller
             "success" => true,
 
         ]);
-        
-        if($res==1){
+
+        if ($res == 1) {
             return response([
                 "data" => $data,
                 "messagge" => 'Tour Mensual Actualizado Exitosamente',
                 "response" => 200,
                 "success" => true,
-    
+
             ]);
-        }else{
+        } else {
             return response([
                 "messagge" => 'Error: Tour Mensual No Actualizado ',
                 "response" => 200,
                 "success" => false,
-    
+
             ]);
         }
     }

@@ -56,7 +56,7 @@ class AuthController extends Controller
         return response ([
             'user'=>$user,
             'accessToken'=>$accessToken,
-            'messagge' => 'David Paca',
+            'messagge' => 'Usuario Agregado Exitosamente',
             'status' => 200
         ]);
     }
