@@ -44,13 +44,17 @@ class TourCatalogueController extends Controller
             'img_1' => 'required|image',
             'img_2' => 'required|image'
         ]);
+        $directory = storage_path() . '/app/public/catalogue/';
+        if (!file_exists($directory)) {
+            mkdir($directory, 0777, true); // Crea la carpeta con permisos 0777 y habilita la creación de carpetas anidadas
+        }
 
         $data = ($request->all());
         if ($request->hasFile('img_1') || $request->hasFile('img_2')) {
             // $path1 = $request->img_1->store('catalogue', 'public');
             // $path2 = $request->img_2->store('catalogue', 'public');
             $name_img = Str::random(10) . $request->file('img_1')->getClientOriginalName();
-            $ruta = storage_path() . '\app\public\catalogue/' . $name_img;
+            $ruta = storage_path() . '/app/public/catalogue/' . $name_img;
             $img = Image::make($request->file('img_1'));
             $img->orientate();
             $img->resize(1200, null, function ($constraint) {
@@ -63,7 +67,7 @@ class TourCatalogueController extends Controller
             $data['img_1'] = $path1;
 
             $name_img = Str::random(10) . $request->file('img_2')->getClientOriginalName();
-            $ruta = storage_path() . '\app\public\catalogue/' . $name_img;
+            $ruta = storage_path() . '/app/public/catalogue/' . $name_img;
             $img = Image::make($request->file('img_2'));
             $img->orientate();
             $img->resize(1200, null, function ($constraint) {
@@ -152,7 +156,7 @@ class TourCatalogueController extends Controller
             // $path1 = $request->img_1->store('catalogue', 'public');
             // $data['img_1'] = $path1;
             $name_img = Str::random(10) . $request->file('img_1')->getClientOriginalName();
-            $ruta = storage_path() . '\app\public\catalogue/' . $name_img;
+            $ruta = storage_path() . '/app/public/catalogue/' . $name_img;
             $img = Image::make($request->file('img_1'));
             $img->orientate();
             $img->resize(1200, null, function ($constraint) {
@@ -170,7 +174,7 @@ class TourCatalogueController extends Controller
             // $path2 = $request->img_2->store('catalogue', 'public');
             // $data['img_2'] = $path2;
             $name_img = Str::random(10) . $request->file('img_2')->getClientOriginalName();
-            $ruta = storage_path() . '\app\public\catalogue/' . $name_img;
+            $ruta = storage_path() . '/app/public/catalogue/' . $name_img;
             $img = Image::make($request->file('img_2'));
             $img->orientate();
             $img->resize(1200, null, function ($constraint) {

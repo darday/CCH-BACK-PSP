@@ -44,12 +44,16 @@ class EquipmentRentController extends Controller
         $request->validate([
             'img_1' => "required|image"
         ]);
+        $directory = storage_path() . '/app/public/equipmentRent/';
+        if (!file_exists($directory)) {
+            mkdir($directory, 0777, true); // Crea la carpeta con permisos 0777 y habilita la creación de carpetas anidadas
+        }
 
         $data = ($request->all());
         if ($request->hasFile('img_1')) {
             // $path = $request->img_1->store('equipmentRent','public');
             $name_img = Str::random(10) . $request->file('img_1')->getClientOriginalName();
-            $ruta = storage_path() . '\app\public\equipment/' . $name_img;
+            $ruta = storage_path() . '/app/public/equipmentRent/' . $name_img;
             $img = Image::make($request->file('img_1'));
             $img->orientate();
             $img->resize(1200, null, function ($constraint) {
@@ -159,6 +163,7 @@ class EquipmentRentController extends Controller
     public function destroy($id)
     {
         $equipRent = EquipmentRent::where('equipment_rent_id', $id)->delete();
+        Storage::delete('public/' . $equipRent->img_1);
         if ($equipRent == 1) {
             return ([
                 "Message" => 'Equipo de alquiler eliminado exitosamente',
