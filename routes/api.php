@@ -41,6 +41,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     ////////////////////////// TOURS
     Route::post('/monthly-tour-add',[MonthlyTourController::class, 'store']);
     Route::get('/monthly-tour-list',[MonthlyTourController::class, 'index']); 
+    Route::get('/monthly-tour-list_active/{cant}',[MonthlyTourController::class, 'showMonthlyTourActive']); 
     Route::get('/monthly-tour-show-id/{tour}',[MonthlyTourController::class, 'showMonthlyTour']); 
     Route::post('/monthly-tour-delete/{tour}',[MonthlyTourController::class, 'destroy']); 
     Route::post('/monthly-tour-update/{tour}',[MonthlyTourController::class, 'update']); 

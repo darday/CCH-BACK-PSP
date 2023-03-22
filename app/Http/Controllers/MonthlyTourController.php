@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\MonthlyTour;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 use Intervention\Image\Facades\Image;
@@ -21,6 +22,16 @@ class MonthlyTourController extends Controller
     public function index()
     {
         return (MonthlyTour::all());
+    }
+
+    public function showMonthlyTourActive($cant_registros)
+    {
+        $registros = DB::table('monthly_tours')
+                ->where('state', '=', 1)
+                ->orderBy('departure_date', 'asc')
+                ->take($cant_registros)
+                ->get();
+        return ($registros);
     }
 
     /**
