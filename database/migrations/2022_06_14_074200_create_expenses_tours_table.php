@@ -15,7 +15,7 @@ class CreateExpensesToursTable extends Migration
     {
         Schema::create('expenses_tours', function (Blueprint $table) {
             $table->id('expense_tour_id');
-            $table->foreignId('monthly_tour_id')->references('monthly_tour_id')->on ('monthly_tours');
+            $table->foreignId('monthly_tour_id');
             $table->float('quantity');
             $table->text('description');
             $table->float('unit_cost');

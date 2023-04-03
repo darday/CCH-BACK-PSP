@@ -2,15 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\tour_catalogue;
+use App\Models\Gallery;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-
 use Intervention\Image\Facades\Image;
 use Illuminate\Support\Str;
 
-class TourCatalogueController extends Controller
+class GalleryController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -19,7 +18,7 @@ class TourCatalogueController extends Controller
      */
     public function index()
     {
-        return (tour_Catalogue::all());
+        return (Gallery::all());
     }
 
     /**
@@ -42,19 +41,16 @@ class TourCatalogueController extends Controller
     {
         $request->validate([
             'img_1' => 'required|image',
-            'img_2' => 'required|image'
         ]);
-        $directory = storage_path() . '/app/public/catalogue/';
+        $directory = storage_path() . '/app/public/gallery/';
         if (!file_exists($directory)) {
             mkdir($directory, 0777, true); // Crea la carpeta con permisos 0777 y habilita la creación de carpetas anidadas
         }
-
+        
         $data = ($request->all());
-        if ($request->hasFile('img_1') || $request->hasFile('img_2')) {
-            // $path1 = $request->img_1->store('catalogue', 'public');
-            // $path2 = $request->img_2->store('catalogue', 'public');
+        if ($request->hasFile('img_1')) {    
             $name_img = Str::random(10) . $request->file('img_1')->getClientOriginalName();
-            $ruta = storage_path() . '/app/public/catalogue/' . $name_img;
+            $ruta = storage_path() . '/app/public/gallery/' . $name_img;
             $img = Image::make($request->file('img_1'));
             $img->orientate();
             $img->resize(1200, null, function ($constraint) {
@@ -63,50 +59,36 @@ class TourCatalogueController extends Controller
             $img->destroy();
 
 
-            $path1 = 'catalogue/' . $name_img;
+            $path1 = 'gallery/' . $name_img;
             $data['img_1'] = $path1;
 
-            $name_img = Str::random(10) . $request->file('img_2')->getClientOriginalName();
-            $ruta = storage_path() . '/app/public/catalogue/' . $name_img;
-            $img = Image::make($request->file('img_2'));
-            $img->orientate();
-            $img->resize(1200, null, function ($constraint) {
-                $constraint->aspectRatio();
-            })->save($ruta);
-            $img->destroy();
-
-
-            $path2 = 'catalogue/' . $name_img;
-            $data['img_2'] = $path2;
         } else {
             return response([
                 "response" => '500',
                 "success" => false,
-
+                "messagge"=>'No existe una imagen',
             ]);
         }
 
 
         $data['img_1'] = $path1;
-        $data['img_2'] = $path2;
         $data['created_at'] = Carbon::now();
 
-        $res = tour_catalogue::insert($data);
+        $res = Gallery::insert($data);
         if ($res == 1) {
             return response([
                 "data" => $data,
-                "messagge" => 'Tour Agregado a Catálogo',
+                "messagge" => 'Imagen Agregada a Galeria',
                 "response" => 200,
                 "success" => true,
 
             ]);
-        }else{
+        } else {
             return response([
                 "data" => $data,
-                "messagge" => 'Error Tour No Agregado a Catálogo',
+                "messagge" => 'Imagen No Agregado a Galeria',
                 "response" => 500,
                 "success" => false,
-
             ]);
         }
     }
@@ -114,10 +96,10 @@ class TourCatalogueController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\tour_catalogue  $tour_catalogue
+     * @param  \App\Models\Gallery  $gallery
      * @return \Illuminate\Http\Response
      */
-    public function show(tour_catalogue $tour_catalogue)
+    public function show(Gallery $gallery)
     {
         //
     }
@@ -125,10 +107,10 @@ class TourCatalogueController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\tour_catalogue  $tour_catalogue
+     * @param  \App\Models\Gallery  $gallery
      * @return \Illuminate\Http\Response
      */
-    public function edit(tour_catalogue $tour_catalogue)
+    public function edit(Gallery $gallery)
     {
         //
     }
@@ -137,20 +119,19 @@ class TourCatalogueController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\tour_catalogue  $tour_catalogue
+     * @param  \App\Models\Gallery  $gallery
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
     {
-
         $data = ($request->all());
         if ($request->hasFile('img_1')) {
-            $tour =  tour_catalogue::where('tour_catalogues_id', $id)->firstOrFail();
+            $tour =  Gallery::where('gallery_id', $id)->firstOrFail();
             Storage::delete('public/' . $tour->img_1);
             // $path1 = $request->img_1->store('catalogue', 'public');
             // $data['img_1'] = $path1;
             $name_img = Str::random(10) . $request->file('img_1')->getClientOriginalName();
-            $ruta = storage_path() . '/app/public/catalogue/' . $name_img;
+            $ruta = storage_path() . '/app/public/gallery/' . $name_img;
             $img = Image::make($request->file('img_1'));
             $img->orientate();
             $img->resize(1200, null, function ($constraint) {
@@ -159,42 +140,22 @@ class TourCatalogueController extends Controller
             $img->destroy();
 
 
-            $path1 = 'catalogue/' . $name_img;
+            $path1 = 'gallery/' . $name_img;
             $data['img_1'] = $path1;
         }
-        if ($request->hasFile('img_2')) {
-            $tour =  tour_catalogue::where('tour_catalogues_id', $id)->firstOrFail();
-            Storage::delete('public/' . $tour->img_2);
-            // $path2 = $request->img_2->store('catalogue', 'public');
-            // $data['img_2'] = $path2;
-            $name_img = Str::random(10) . $request->file('img_2')->getClientOriginalName();
-            $ruta = storage_path() . '/app/public/catalogue/' . $name_img;
-            $img = Image::make($request->file('img_2'));
-            $img->orientate();
-            $img->resize(1200, null, function ($constraint) {
-                $constraint->aspectRatio();
-            })->save($ruta);
-            $img->destroy();
 
-
-            $path2 = 'catalogue/' . $name_img;
-            $data['img_2'] = $path2;
-        }
-
-
-
-        $res = tour_catalogue::where('tour_catalogues_id', $id)->update($data);
+        $res = Gallery::where('gallery_id', $id)->update($data);
         if ($res == 1) {
             return response([
                 "data" => $data,
-                "messagge" => 'Tour Actualizado Exitosamente',
+                "messagge" => 'Imagen Acualizada Exitosamente',
                 "response" => 200,
                 "success" => true,
 
             ]);
         } else {
             return response([
-                "messagge" => 'Error: Tour No Actualizado ',
+                "messagge" => 'Error: Imagen No Actualizada',
                 "response" => 200,
                 "success" => false,
 
@@ -205,26 +166,25 @@ class TourCatalogueController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\tour_catalogue  $tour_catalogue
+     * @param  \App\Models\Gallery  $gallery
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)
     {
-        $tour =  tour_catalogue::where('tour_catalogues_id', $id)->firstOrFail();
+        $tour =  Gallery::where('gallery_id', $id)->firstOrFail();
         Storage::delete('public/' . $tour->img_1);
         Storage::delete('public/' . $tour->img_2);
-        tour_catalogue::where('tour_catalogues_id', $id)->delete();
+        Gallery::where('gallery_id', $id)->delete();
         return response([
-            "messagge" => 'Tour Eliminado Exitosamente',
+            "messagge" => 'Imagen Eliminada Exitosamente',
             "response" => 200,
             "success" => true,
-
         ]);
     }
 
-    public function showTour($id)
+    public function showGallery($id)
     {
-        $tour =  tour_catalogue::where('tour_catalogues_id', $id)->get();
+        $tour =  Gallery::where('gallery_id', $id)->get();
         return ($tour);
     }
 }

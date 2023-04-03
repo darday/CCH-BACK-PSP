@@ -15,8 +15,8 @@ class CreateBankAccountsToursTable extends Migration
     {
         Schema::create('bank_accounts_tours', function (Blueprint $table) {
             $table->id('bank_account_tour_id');
-            $table->foreignId('bank_accounts_id')->references('bank_accounts_id')->on ('bank_accounts');
-            $table->foreignId('monthly_tour_id')->references('monthly_tour_id')->on ('monthly_tours');
+            $table->foreignId('bank_accounts_id');
+            $table->foreignId('monthly_tour_id');
             $table->float('utility');
             $table->float('money_before_tour');
             $table->float('money_after_tour');

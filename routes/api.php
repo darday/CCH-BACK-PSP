@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\EquipmentController;
 use App\Http\Controllers\EquipmentRentController;
+use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\MonthlyTourController;
 use App\Http\Controllers\TourCatalogueController;
@@ -68,6 +69,13 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     Route::get('/equipment-rent-show/{equipmentRent}',[EquipmentRentController::class, 'showequipmentrent']);
     Route::post('/equipment-rent-delete/{equipmentRent}',[EquipmentRentController::class, 'destroy']);
     Route::post('/equipment-rent-update/{equipmentRent}',[EquipmentRentController::class, 'update']);
+
+    ///////////////////////// GALLERY
+    Route::post('/gallery-add',[GalleryController::class, 'store']);
+    Route::get('/gallery-list',[GalleryController::class, 'index']);
+    Route::post('/gallery-delete/{equipmentRent}',[GalleryController::class, 'destroy']);
+    Route::get('/gallery-show/{equipmentRent}',[GalleryController::class, 'showGallery']);
+    Route::post('/gallery-update/{equipmentRent}',[GalleryController::class, 'update']);
 
 
 

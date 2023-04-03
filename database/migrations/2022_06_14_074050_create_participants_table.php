@@ -15,7 +15,7 @@ class CreateParticipantsTable extends Migration
     {
         Schema::create('participants', function (Blueprint $table) {
             $table->id('participant_id');
-            $table->foreignId('monthly_tour_id')->references('monthly_tour_id')->on ('monthly_tours');
+            $table->foreignId('monthly_tour_id');
             $table->string('name');
             $table->string('last_name');
             $table->integer('seats');
