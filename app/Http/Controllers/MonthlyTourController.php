@@ -26,8 +26,10 @@ class MonthlyTourController extends Controller
 
     public function showMonthlyTourActive($cant_registros)
     {
+        $currentDate = Carbon::now();
         $registros = DB::table('monthly_tours')
                 ->where('state', '=', 1)
+                ->where('departure_date','>=',$currentDate)
                 ->orderBy('departure_date', 'asc')
                 ->take($cant_registros)
                 ->get();

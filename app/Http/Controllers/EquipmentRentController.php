@@ -62,7 +62,7 @@ class EquipmentRentController extends Controller
             $img->destroy();
 
 
-            $path1 = 'equipment/' . $name_img;
+            $path1 = 'equipmentRent/' . $name_img;
             $data['img_1'] = $path1;
         } else {
             return response([
