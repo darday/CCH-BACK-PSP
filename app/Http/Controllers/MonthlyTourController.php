@@ -21,19 +21,56 @@ class MonthlyTourController extends Controller
      */
     public function index()
     {
-        return (MonthlyTour::all());
+        $registros = DB::table('monthly_tours')
+            // ->where('state', '=', 1)
+            ->orderBy('departure_date', 'asc')
+            ->get();
+        return ($registros);
+    }
+
+    public function showMonthlyTourAvailable()
+    {
+        $registros = DB::table('monthly_tours')
+            ->where('state', '=', 1)
+            ->orderBy('departure_date', 'asc')
+            ->get();
+        return ($registros);
     }
 
     public function showMonthlyTourActive($cant_registros)
     {
         $currentDate = Carbon::now();
         $registros = DB::table('monthly_tours')
-                ->where('state', '=', 1)
-                ->where('departure_date','>=',$currentDate)
-                ->orderBy('departure_date', 'asc')
-                ->take($cant_registros)
-                ->get();
+            ->where('state', '=', 1)
+            ->where('departure_date', '>=', $currentDate)
+            ->orderBy('departure_date', 'asc')
+            ->take($cant_registros)
+            ->get();
         return ($registros);
+    }
+    
+    public function updateStatePastTour()
+    {
+        // Pone en inactivo las rutas que ya han pasdo
+        $currentDate = Carbon::now();
+        $updateTours = MonthlyTour::where('departure_date', '<=', $currentDate)
+                        ->update(['state'=>0]);
+        var_dump($updateTours);
+        if($updateTours >= 1){
+            return response([
+                "messagge" => 'Exitoso.',
+                "response" => '200',
+                "success" => true,
+            ]);
+        }else{
+            return response([
+                "messagge" => 'Fallido.',
+                "response" => '500',
+                "success" => false,
+            ]);
+
+        }
+        
     }
 
     /**

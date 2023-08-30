@@ -8,6 +8,7 @@ use App\Http\Controllers\EquipmentRentController;
 use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\MonthlyTourController;
+use App\Http\Controllers\PassengerListMonthlyTourController;
 use App\Http\Controllers\TourCatalogueController;
 use App\Models\EquipmentRent;
 
@@ -43,11 +44,18 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     Route::post('/monthly-tour-add',[MonthlyTourController::class, 'store']);
     Route::get('/monthly-tour-list',[MonthlyTourController::class, 'index']); 
     Route::get('/monthly-tour-list_active/{cant}',[MonthlyTourController::class, 'showMonthlyTourActive']); 
+    Route::get('/monthly-tour-available',[MonthlyTourController::class, 'showMonthlyTourAvailable']); 
     Route::get('/monthly-tour-show-id/{tour}',[MonthlyTourController::class, 'showMonthlyTour']); 
     Route::post('/monthly-tour-delete/{tour}',[MonthlyTourController::class, 'destroy']); 
     Route::post('/monthly-tour-update/{tour}',[MonthlyTourController::class, 'update']); 
+    Route::post('/monthly-tour-update-past-tour',[MonthlyTourController::class, 'updateStatePastTour']); 
 
 
+    ///////////////////////// PASSENGERS-TOUR
+    Route::post('/passengerlistTour-create',[PassengerListMonthlyTourController::class, 'store']);
+    Route::get('/passengerlistTour-list',[PassengerListMonthlyTourController::class, 'index']);
+    Route::get('/passengerlistTour-list-active',[PassengerListMonthlyTourController::class, 'passengerlistTourActive']);
+    Route::get('/passengerlistTour-list-byID/{tour}',[PassengerListMonthlyTourController::class, 'findPassengerMonthlyTourById']);
 
     ///////////////////////// CATALOGUE
     Route::post('/catalogue-add',[TourCatalogueController::class, 'store']); 
