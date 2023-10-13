@@ -15,7 +15,7 @@ class CreatePassengerListMonthlyToursTable extends Migration
     {
         Schema::create('passenger_list_monthly_tours', function (Blueprint $table) {
             $table->id('passenger_list_monthly_tours');
-            $table->integer('passenger_lists_id');
+            $table->integer('list_id');
             $table->integer('monthly_tour_id');            
             $table->integer('status');            
             $table->timestamps();

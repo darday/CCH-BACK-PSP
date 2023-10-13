@@ -15,11 +15,9 @@ class CreatePassengerListsTable extends Migration
     {
         Schema::create('passenger_lists', function (Blueprint $table) {
             $table->id('passenger_lists_id');
-            $table->integer('passenger_list_monthly_tours_id');
+            $table->integer('list_id');
+            $table->integer('passenger_id');
             $table->integer('seat')->nullable();
-            $table->string('ci')->nullable();
-            $table->text('passenger_name')->nullable();
-            $table->text('passenger_city')->nullable(); 
             $table->float('unit_cost')->nullable();
             $table->float('total_cost')->nullable();
             $table->float('collected')->nullable();

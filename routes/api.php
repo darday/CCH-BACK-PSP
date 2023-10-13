@@ -10,7 +10,15 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\MonthlyTourController;
 use App\Http\Controllers\PassengerListMonthlyTourController;
 use App\Http\Controllers\TourCatalogueController;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\InventoryController;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ProductWarehouseController;
+use App\Http\Controllers\StatusController;
+use App\Http\Controllers\SupplierController;
+use App\Http\Controllers\WarehouseController;
 use App\Models\EquipmentRent;
+use App\Models\Inventory;
 
 /*
 |--------------------------------------------------------------------------
@@ -85,6 +93,29 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     Route::get('/gallery-show/{equipmentRent}',[GalleryController::class, 'showGallery']);
     Route::post('/gallery-update/{equipmentRent}',[GalleryController::class, 'update']);
 
+
+    ///////////////////////// INVENTORY
+    Route::get('/category-list',[CategoryController::class, 'index']);
+    Route::get('/product-list',[ProductController::class, 'index']);
+    Route::get('/supplier-list',[SupplierController::class, 'index']);
+    Route::get('/warehouse-list',[WarehouseController::class, 'index']);
+    Route::get('/status-list',[StatusController::class, 'index']);
+
+    Route::get('/inventory-list',[InventoryController::class, 'index']);
+    Route::get('/productsInWarehouse/{warehouse}',[ProductWarehouseController::class, 'productsInWarehouse']);
+    Route::post('/inventory-add',[InventoryController::class, 'store']);
+    Route::post('/inventory-edit',[InventoryController::class, 'update']);
+
+
+    Route::post('/product-add',[ProductController::class, 'store']);
+    Route::post('/product-delete/{product}',[ProductController::class, 'destroy']);
+
+    Route::post('/productsWarehouse-add',[ProductWarehouseController::class, 'store']);
+    Route::post('/productsWarehouse-delete/{id}',[ProductWarehouseController::class, 'destroy']);
+    Route::post('/productsWarehouse-addObservation/{id}',[ProductWarehouseController::class, 'addObservation']);
+
+
+    
 
 
 

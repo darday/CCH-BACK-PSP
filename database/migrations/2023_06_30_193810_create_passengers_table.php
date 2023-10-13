@@ -14,14 +14,14 @@ class CreatePassengersTable extends Migration
     public function up()
     {
         Schema::create('passengers', function (Blueprint $table) {
-            $table->id();
+            $table->id('passenger_id');
             $table->text('ci');
             $table->text('name');
             $table->text('phone')->nullable();
             $table->text('city')->nullable();
             $table->text('correo')->nullable();
-            $table->text('edad')->nullable();
-            $table->text('fecha_nacimiento')->nullable();
+            $table->text('age')->nullable();
+            $table->text('born_date')->nullable();
 
             $table->timestamps();
         });

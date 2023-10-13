@@ -158,7 +158,6 @@ class MonthlyTourController extends Controller
                 "messagge" => 'Tour Agregado Exitosamente.',
                 "response" => 200,
                 "success" => true,
-
             ]);
         } else {
             return response([
