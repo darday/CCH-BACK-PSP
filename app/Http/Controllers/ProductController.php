@@ -57,7 +57,7 @@ class ProductController extends Controller
             mkdir($directory, 0777, true); // Crea la carpeta con permisos 0777 y habilita la creación de carpetas anidadas
         }
 
-        if ($request->hasFile('img_1') || $request->hasFile('img_2')) {
+        if ($request->hasFile('img')) {
 
             $name_img = Str::random(10) . $request->file('img')->getClientOriginalName();
             $ruta = storage_path() . '/app/public/products/' . $name_img;

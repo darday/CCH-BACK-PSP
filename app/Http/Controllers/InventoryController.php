@@ -26,7 +26,7 @@ class InventoryController extends Controller
             ->join('categories', 'products.category_id', '=', 'categories.categories_id')
             ->join('suppliers', 'products.supplier_id', '=', 'suppliers.suppliers_id')
             ->join('statuses', 'inventories.status_id', '=', 'statuses.status_id')
-            ->select('inventories.inventories_id', 'inventories.stock', 'products.description as product', 'products.product_id as product_id',  'categories.description as category', 'statuses.description as status', 'statuses.status_id as status_id', 'inventories.inWarehouse', 'inventories.withoutWarehouse', 'inventories.*')
+            ->select('inventories.inventories_id', 'inventories.stock', 'products.description as product', 'products.product_id as product_id',  'categories.description as category', 'statuses.description as status', 'statuses.status_id as status_id', 'inventories.inWarehouse', 'inventories.withoutWarehouse', 'suppliers.name_store','inventories.*')
             ->orderBy('products.description', 'asc')
             ->orderBy('statuses.description', 'asc')
             ->get();
