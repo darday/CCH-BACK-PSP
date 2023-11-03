@@ -1,0 +1,6 @@
+Cuando se clone el Proyecto ejecutar este comando para que se pueda trabajar con imagenes
+php artisan storage:link
+
+Este proyecto trabaja las imagenes con: 
+https://image.intervention.io/v2/introduction/installation
+https://www.youtube.com/watch?v=ywiM3ZgjVfs

@@ -15,8 +15,9 @@ class CreateProductWarehousesTable extends Migration
     {
         Schema::create('product_warehouses', function (Blueprint $table) {
             $table->id('product_warehouses_id');
-            $table->integer('product_id');
-            $table->integer('product_status_id');
+            $table->integer('inventories_id')->nullable();
+            $table->integer('product_id')->nullable();
+            $table->integer('product_status_id')->nullable();
             $table->integer('warehouse_id');
             $table->integer('quantity')->nullable();
             $table->text('observation')->nullable();

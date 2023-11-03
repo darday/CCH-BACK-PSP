@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Lista;
 use App\Models\PassengerListMonthlyTour;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -108,6 +109,17 @@ class PassengerListMonthlyTourController extends Controller
     public function store(Request $request)
     {
         // return($request->monthly_tour_id);
+        $data['description'] = $request->tour_destiny;
+        $data['created_at'] = now();
+        $data['updated_at'] = now();
+
+        Lista::insert($data);
+        $list =  Lista::orderby('created_at','desc') ->first();
+        return $list->list_id;
+
+
+
+
 
         $data['passenger_lists_id'] = $request->monthly_tour_id;
         $data['monthly_tour_id'] = $request->monthly_tour_id;

@@ -105,6 +105,8 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     Route::get('/productsInWarehouse/{warehouse}',[ProductWarehouseController::class, 'productsInWarehouse']);
     Route::post('/inventory-add',[InventoryController::class, 'store']);
     Route::post('/inventory-edit',[InventoryController::class, 'update']);
+    Route::get('/inventory-show/{inventoryId}',[InventoryController::class, 'showInventoryById']);
+
 
 
     Route::post('/product-add',[ProductController::class, 'store']);

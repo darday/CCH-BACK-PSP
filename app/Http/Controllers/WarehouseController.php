@@ -14,7 +14,7 @@ class WarehouseController extends Controller
      */
     public function index()
     {
-        $warehouse = Warehouse::orderBy('Description', 'asc')->get();
+        $warehouse = Warehouse::orderBy('description', 'asc')->get();
         return $warehouse;
     }
 

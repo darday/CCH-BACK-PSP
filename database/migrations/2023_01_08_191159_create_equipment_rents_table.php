@@ -15,16 +15,14 @@ class CreateEquipmentRentsTable extends Migration
     {
         Schema::create('equipment_rents', function (Blueprint $table) {
             $table->id('equipment_rent_id');
-            $table->string('name');
+            $table->integer('inventories_id');
             $table->text('description');
-            $table->float('cost');
-            $table->string('img_1');
-            $table->boolean('state');
-            $table->string('type');
+            $table->boolean('isActive');
             $table->float('discount');
             $table->string('discount_description');
             $table->string('contact_phone');
-            $table->string('messagge_for_contact');
+            $table->string('messagge_for_contact')->nullable();
+            $table->float('cch_points')->nullable();
             $table->string('varchar_1')->nullable();
             $table->string('varchar_2')->nullable();
             $table->string('varchar_3')->nullable();

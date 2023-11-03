@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\EquipmentRent;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 use Intervention\Image\Facades\Image;
@@ -20,7 +21,26 @@ class EquipmentRentController extends Controller
      */
     public function index()
     {
-        return (EquipmentRent::all());
+        // return (EquipmentRent::all());
+        $inventory = DB::table('equipment_rents')
+        ->join('inventories', 'equipment_rents.inventories_id', '=', 'inventories.inventories_id')
+        ->join('products', 'inventories.product_id', '=', 'products.product_id')
+        ->join('categories', 'products.category_id', '=', 'categories.categories_id')
+        ->join('statuses', 'inventories.status_id', '=', 'statuses.status_id')
+        ->select('inventories.inventories_id', 'inventories.stock', 'products.description as product', 
+        'products.product_id as product_id', 'products.rent_price as rent_price','products.img as img',  
+        'categories.description as category', 'statuses.description as status', 'statuses.status_id as status_id', 
+        'inventories.inWarehouse', 'inventories.withoutWarehouse','equipment_rents.description as description',
+        'equipment_rents.isActive as isActive','equipment_rents.contact_phone as contact_phone',
+        'equipment_rents.discount_description as discount_description',
+        'equipment_rents.discount as discount','equipment_rents.messagge_for_contact as messagge_for_contact'
+        )
+        ->orderBy('products.description', 'asc')
+        ->orderBy('statuses.description', 'asc')
+        // ->where('inventories_id', '=', $id)
+        ->get();
+
+        return $inventory;
     }
 
     /**
@@ -41,36 +61,39 @@ class EquipmentRentController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'img_1' => "required|image"
-        ]);
-        $directory = storage_path() . '/app/public/equipmentRent/';
-        if (!file_exists($directory)) {
-            mkdir($directory, 0777, true); // Crea la carpeta con permisos 0777 y habilita la creación de carpetas anidadas
-        }
+        // $request->validate([
+        //     'img_1' => "required|image"
+        // ]);
+        // $directory = storage_path() . '/app/public/equipmentRent/';
+        // if (!file_exists($directory)) {
+        //     mkdir($directory, 0777, true); // Crea la carpeta con permisos 0777 y habilita la creación de carpetas anidadas
+        // }
 
         $data = ($request->all());
-        if ($request->hasFile('img_1')) {
-            // $path = $request->img_1->store('equipmentRent','public');
-            $name_img = Str::random(10) . $request->file('img_1')->getClientOriginalName();
-            $ruta = storage_path() . '/app/public/equipmentRent/' . $name_img;
-            $img = Image::make($request->file('img_1'));
-            $img->orientate();
-            $img->resize(1200, null, function ($constraint) {
-                $constraint->aspectRatio();
-            })->save($ruta);
-            $img->destroy();
+        // if ($request->hasFile('img_1')) {
+        //     // $path = $request->img_1->store('equipmentRent','public');
+        //     $name_img = Str::random(10) . $request->file('img_1')->getClientOriginalName();
+        //     $ruta = storage_path() . '/app/public/equipmentRent/' . $name_img;
+        //     $img = Image::make($request->file('img_1'));
+        //     $img->orientate();
+        //     $img->resize(1200, null, function ($constraint) {
+        //         $constraint->aspectRatio();
+        //     })->save($ruta);
+        //     $img->destroy();
 
 
-            $path1 = 'equipmentRent/' . $name_img;
-            $data['img_1'] = $path1;
-        } else {
-            return response([
-                "response" => '500',
-                "success" => false,
-            ]);
-        }
+        //     $path1 = 'equipmentRent/' . $name_img;
+        //     $data['img_1'] = $path1;
+        // } else {
+        //     return response([
+        //         "response" => '500',
+        //         "success" => false,
+        //     ]);
+        // }
+
+
         $data['created_at'] = Carbon::now();
+        $data['updated_at'] = Carbon::now();
 
 
         $res = EquipmentRent::insert($data);

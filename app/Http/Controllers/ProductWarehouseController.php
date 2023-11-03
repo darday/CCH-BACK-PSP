@@ -56,18 +56,36 @@ class ProductWarehouseController extends Controller
     {
         $product = DB::table('warehouses')
             ->join('product_warehouses', 'product_warehouses.warehouse_id', '=', 'warehouses.warehouse_id')
-            // ->join('inventories', 'inventories.product_id', '=', 'product_warehouses.product_id')
-            ->join('inventories', function (JoinClause $join) {
-                $join->on('inventories.product_id', '=', 'product_warehouses.product_id')
-                    ->on('inventories.status_id', '=', 'product_warehouses.product_status_id');
-            })
+            ->join('inventories', 'inventories.inventories_id', '=', 'product_warehouses.inventories_id')
             ->join('products', 'products.product_id', '=', 'inventories.product_id')
             ->join('categories', 'categories.categories_id', '=', 'products.category_id')
             ->join('statuses', 'statuses.status_id', '=', 'inventories.status_id')
-            ->select('warehouses.warehouse_id as warehouse_id', 'warehouses.description as warehouse', 'product_warehouses.quantity as quantity', 'products.product_id as product_id', 'products.description as product', 'inventories.status_id as status_id', 'statuses.description as status', 'product_warehouses.observation', 'product_warehouses.product_warehouses_id')
+            ->join('suppliers', 'products.supplier_id', '=', 'suppliers.suppliers_id')
+            ->select('warehouses.warehouse_id as warehouse_id', 'warehouses.description as warehouse', 
+            'product_warehouses.quantity as quantity', 'products.product_id as product_id','products.img as img', 
+            'products.description as product', 'inventories.status_id as status_id', 'statuses.description as status',
+            'product_warehouses.observation', 'product_warehouses.product_warehouses_id' , 
+            'product_warehouses.inventories_id', 
+            'suppliers.name_store')
             // ->orderBy('products.description')
             ->where('warehouses.warehouse_id', '=', $id)
             ->get();
+
+
+            // // // // ->join('product_warehouses', 'product_warehouses.warehouse_id', '=', 'warehouses.warehouse_id')
+            // // // // // ->join('inventories', 'inventories.product_id', '=', 'product_warehouses.product_id')
+            // // // // ->join('inventories', function (JoinClause $join) {
+            // // // //     $join->on('inventories.product_id', '=', 'product_warehouses.product_id')
+            // // // //         ->on('inventories.status_id', '=', 'product_warehouses.product_status_id');
+            // // // // })
+            // // // // ->join('products', 'products.product_id', '=', 'inventories.product_id')
+            // // // // ->join('categories', 'categories.categories_id', '=', 'products.category_id')
+            // // // // ->join('statuses', 'statuses.status_id', '=', 'inventories.status_id')
+            // // // // ->join('suppliers', 'products.supplier_id', '=', 'suppliers.suppliers_id')
+            // // // // ->select('warehouses.warehouse_id as warehouse_id', 'warehouses.description as warehouse', 'product_warehouses.quantity as quantity', 'products.product_id as product_id', 'products.description as product', 'inventories.status_id as status_id', 'statuses.description as status', 'product_warehouses.observation', 'product_warehouses.product_warehouses_id', 'suppliers.name_store')
+            // // // // // ->orderBy('products.description')
+            // // // // ->where('warehouses.warehouse_id', '=', $id)
+            // // // // ->get();
 
         return $product;
     }
@@ -92,44 +110,36 @@ class ProductWarehouseController extends Controller
     {
         // UPDATE INVENTORY
         $stock = DB::table('inventories')
-            // ->select('stock')
-            ->where('product_id', '=', $request->product_id)
-            ->where('status_id', '=', $request->product_status_id)
+            ->where('inventories_id', $request->inventories_id)
             ->get();
         $data = json_decode($stock, true);
-
 
         $inWarehouse = $data[0]['inWarehouse'] + $request->quantityToMove;
         $withoutWarehouse = $data[0]['withoutWarehouse'] - $request->quantityToMove;
 
         $updateInventory = DB::table('inventories')
-            ->where('product_id', $request->product_id)
-            ->where('status_id', '=', $request->product_status_id)
+            ->where('inventories_id', $request->inventories_id)
             ->update(['inWarehouse' => $inWarehouse, 'withoutWarehouse' => $withoutWarehouse]);
 
         // ADD PRODUCT TO WAREHOUSE
-
         $productWarhouseExist = DB::table('product_warehouses')
-            ->where('product_id', '=', $request->product_id)
+            ->where('inventories_id', $request->inventories_id)
             ->where('warehouse_id', '=', $request->warehouse_id)
-            ->where('product_status_id', '=', $request->product_status_id)
             ->get();
         $productWarhouseExist = json_decode($productWarhouseExist, true);
         if (count($productWarhouseExist) == 0) {
             $query = DB::table('product_warehouses')->insert([
-                'product_id' => $request->product_id,
+                'inventories_id' => $request->inventories_id,
                 'warehouse_id' => $request->warehouse_id,
                 'quantity' => $request->quantityToMove,
-                'product_status_id' => $request->product_status_id,
                 'observation' => $request->observation,
             ]);
             $message = "Producto Agregado Exitosamente";
         } else {
             $quantityUpdated = $productWarhouseExist[0]['quantity'] + $request->quantityToMove;
             $query = DB::table('product_warehouses')
-                ->where('product_id', $request->product_id)
+                ->where('inventories_id', $request->inventories_id)
                 ->where('warehouse_id', '=', $request->warehouse_id)
-                ->where('product_status_id', '=', $request->product_status_id)
                 ->update([
                     'quantity' => $quantityUpdated,
                     'observation' => $request->observation,
@@ -153,6 +163,69 @@ class ProductWarehouseController extends Controller
                 "success" => false,
             ]);
         }
+        // // // // // // // UPDATE INVENTORY
+        // // // // // // $stock = DB::table('inventories')
+        // // // // // //     // ->select('stock')
+        // // // // // //     ->where('product_id', '=', $request->product_id)
+        // // // // // //     ->where('status_id', '=', $request->product_status_id)
+        // // // // // //     ->get();
+        // // // // // // $data = json_decode($stock, true);
+
+
+        // // // // // // $inWarehouse = $data[0]['inWarehouse'] + $request->quantityToMove;
+        // // // // // // $withoutWarehouse = $data[0]['withoutWarehouse'] - $request->quantityToMove;
+
+        // // // // // // $updateInventory = DB::table('inventories')
+        // // // // // //     ->where('product_id', $request->product_id)
+        // // // // // //     ->where('status_id', '=', $request->product_status_id)
+        // // // // // //     ->update(['inWarehouse' => $inWarehouse, 'withoutWarehouse' => $withoutWarehouse]);
+
+        // // // // // // // ADD PRODUCT TO WAREHOUSE
+
+        // // // // // // $productWarhouseExist = DB::table('product_warehouses')
+        // // // // // //     ->where('product_id', '=', $request->product_id)
+        // // // // // //     ->where('warehouse_id', '=', $request->warehouse_id)
+        // // // // // //     ->where('product_status_id', '=', $request->product_status_id)
+        // // // // // //     ->get();
+        // // // // // // $productWarhouseExist = json_decode($productWarhouseExist, true);
+        // // // // // // if (count($productWarhouseExist) == 0) {
+        // // // // // //     $query = DB::table('product_warehouses')->insert([
+        // // // // // //         'product_id' => $request->product_id,
+        // // // // // //         'warehouse_id' => $request->warehouse_id,
+        // // // // // //         'quantity' => $request->quantityToMove,
+        // // // // // //         'product_status_id' => $request->product_status_id,
+        // // // // // //         'observation' => $request->observation,
+        // // // // // //     ]);
+        // // // // // //     $message = "Producto Agregado Exitosamente";
+        // // // // // // } else {
+        // // // // // //     $quantityUpdated = $productWarhouseExist[0]['quantity'] + $request->quantityToMove;
+        // // // // // //     $query = DB::table('product_warehouses')
+        // // // // // //         ->where('product_id', $request->product_id)
+        // // // // // //         ->where('warehouse_id', '=', $request->warehouse_id)
+        // // // // // //         ->where('product_status_id', '=', $request->product_status_id)
+        // // // // // //         ->update([
+        // // // // // //             'quantity' => $quantityUpdated,
+        // // // // // //             'observation' => $request->observation,
+        // // // // // //         ]);
+        // // // // // //     $message = "Producto Actualizado Exitosamente";
+        // // // // // // }
+
+
+        // // // // // // if ($query == 1) {
+        // // // // // //     return response([
+        // // // // // //         // "data" => $data,
+        // // // // // //         "messagge" => $message,
+        // // // // // //         "response" => 200,
+        // // // // // //         "success" => true,
+        // // // // // //     ]);
+        // // // // // // } else {
+        // // // // // //     return response([
+        // // // // // //         // "data" => $data,
+        // // // // // //         "messagge" => $message,
+        // // // // // //         "response" => 200,
+        // // // // // //         "success" => false,
+        // // // // // //     ]);
+        // // // // // // }
     }
 
     /**
@@ -203,18 +276,16 @@ class ProductWarehouseController extends Controller
         $findProductInWarehouse = json_decode($findProductInWarehouse, true);
 
         $findProductInInventory = DB::table('inventories')
-            ->where('product_id', $findProductInWarehouse[0]['product_id'])
-            ->where('status_id', '=', $findProductInWarehouse[0]['product_status_id'])
+            ->where('inventories_id', '=', $findProductInWarehouse[0]['inventories_id'])
             ->get();
         $findProductInInventory = json_decode($findProductInInventory, true);
 
         $updateInventory = DB::table('inventories')
-            ->where('product_id', $findProductInWarehouse[0]['product_id'])
-            ->where('status_id', '=', $findProductInWarehouse[0]['product_status_id'])
+            ->where('inventories_id', '=', $findProductInWarehouse[0]['inventories_id'])
             ->update([
                 'withoutWarehouse' => $findProductInInventory[0]['withoutWarehouse'] + $findProductInWarehouse[0]['quantity'],
                 'inWarehouse' => $findProductInInventory[0]['inWarehouse'] - $findProductInWarehouse[0]['quantity']
-                
+
             ]);
 
         $resp = ProductWarehouse::where('product_warehouses_id', $id)->delete();
@@ -231,5 +302,39 @@ class ProductWarehouseController extends Controller
                 "success" => false,
             ]);
         }
+        // // // // $findProductInWarehouse = DB::table('product_warehouses')
+        // // // //     ->where('product_warehouses_id', '=', $id)
+        // // // //     ->get();
+        // // // // $findProductInWarehouse = json_decode($findProductInWarehouse, true);
+
+        // // // // $findProductInInventory = DB::table('inventories')
+        // // // //     ->where('product_id', $findProductInWarehouse[0]['product_id'])
+        // // // //     ->where('status_id', '=', $findProductInWarehouse[0]['product_status_id'])
+        // // // //     ->get();
+        // // // // $findProductInInventory = json_decode($findProductInInventory, true);
+
+        // // // // $updateInventory = DB::table('inventories')
+        // // // //     ->where('product_id', $findProductInWarehouse[0]['product_id'])
+        // // // //     ->where('status_id', '=', $findProductInWarehouse[0]['product_status_id'])
+        // // // //     ->update([
+        // // // //         'withoutWarehouse' => $findProductInInventory[0]['withoutWarehouse'] + $findProductInWarehouse[0]['quantity'],
+        // // // //         'inWarehouse' => $findProductInInventory[0]['inWarehouse'] - $findProductInWarehouse[0]['quantity']
+
+        // // // //     ]);
+
+        // // // // $resp = ProductWarehouse::where('product_warehouses_id', $id)->delete();
+        // // // // if ($resp == 1) {
+        // // // //     return ([
+        // // // //         "messagge" => 'Producto eliminado exitosamente',
+        // // // //         "response" => '200',
+        // // // //         "success" => true,
+        // // // //     ]);
+        // // // // } else {
+        // // // //     return ([
+        // // // //         "messagge" => 'Producto ya eliminado',
+        // // // //         "response" => '500',
+        // // // //         "success" => false,
+        // // // //     ]);
+        // // // // }
     }
 }

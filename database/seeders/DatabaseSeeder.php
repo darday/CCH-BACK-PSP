@@ -51,12 +51,27 @@ class DatabaseSeeder extends Seeder
         Category::create([
             'Description'=>'Electrónica',
         ]);
+        Category::create([
+            'Description'=>'Refrigerios',
+        ]);
+        Category::create([
+            'Description'=>'Desayuno',
+        ]);
+        Category::create([
+            'Description'=>'Merienda',
+        ]);
 
         Supplier::create([
             'name_store'=>'Comercial Guacho',
             'phone'=>'0963124578',
             'address'=>'Riobamba Olmedo y la que cruza',
             'owner'=>'Sra Guacho',
+        ]);
+        Supplier::create([
+            'name_store'=>'Titan',
+            'phone'=>'9999999',
+            'address'=>'Parque Industrial',
+            'owner'=>'Gerente titan',
         ]);
         Supplier::create([
             'name_store'=>'Constante',
@@ -95,6 +110,13 @@ class DatabaseSeeder extends Seeder
             'address'=>'Complejo la Panadería',
             'phone'=>'0993786135',
             'observation'=>'Bodega casa Luchin',
+        ]);
+        
+        Warehouse::create([
+            'description'=>'Bodega Alimentación',
+            'address'=>'Redondel del Libro',
+            'phone'=>'0961119670',
+            'observation'=>'Mamá Darío - María Paca',
         ]);
 
         Product::create([
@@ -206,8 +228,9 @@ class DatabaseSeeder extends Seeder
 
         ProductWarehouse::create([
             'product_id'=>'1',
-            'warehouse_id'=>'2',
+            'warehouse_id'=>'1',
             'quantity'=>'2',
+            'inventories_id'=>'1',
             'product_status_id'=>'2',
         ]);
         

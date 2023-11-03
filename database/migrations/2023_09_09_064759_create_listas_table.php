@@ -16,6 +16,8 @@ class CreateListasTable extends Migration
         Schema::create('listas', function (Blueprint $table) {
             $table->id("list_id");
             $table->text('Description')->nullable();
+            $table->text('varchar1')->nullable();
+            $table->integer('int1')->nullable();
             $table->timestamps();
         });
     }
