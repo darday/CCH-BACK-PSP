@@ -60,6 +60,9 @@ class DatabaseSeeder extends Seeder
         Category::create([
             'Description'=>'Merienda',
         ]);
+        Category::create([
+            'Description'=>'Alimentos',
+        ]);
 
         Supplier::create([
             'name_store'=>'Comercial Guacho',
@@ -83,6 +86,12 @@ class DatabaseSeeder extends Seeder
             'name_store'=>'Kapak Urku',
             'phone'=>'0963124578',
             'address'=>'Riobamba - Coliseo',
+            'owner'=>'Mayor',
+        ]);
+        Supplier::create([
+            'name_store'=>'Dicosavi',
+            'phone'=>'0963124578',
+            'address'=>'Riobamba - Guayaquil y 5 de junio',
             'owner'=>'Mayor',
         ]);
 
@@ -162,7 +171,39 @@ class DatabaseSeeder extends Seeder
             'selling_price'=>'15',
             'rent_price'=>'5',
             'entry_date'=>'2023-09-12',
+        ]);
 
+        Product::create([
+            'category_id'=>'14',
+            'supplier_id'=>'5',
+            'description'=>'Galletas Ducales',
+            'buying_price'=>'1.5',
+            'min_selling_price'=>'2',
+            'selling_price'=>'2',
+            'rent_price'=>'2.1',
+            'entry_date'=>'2023-11-17',
+        ]);
+
+        Product::create([
+            'category_id'=>'14',
+            'supplier_id'=>'5',
+            'description'=>'Yogurt Toni',
+            'buying_price'=>'0.5',
+            'min_selling_price'=>'0.75',
+            'selling_price'=>'0.75',
+            'rent_price'=>'0.85',
+            'entry_date'=>'2023-11-17',
+        ]);
+
+        Product::create([
+            'category_id'=>'14',
+            'supplier_id'=>'5',
+            'description'=>' Pan Supan',
+            'buying_price'=>'2',
+            'min_selling_price'=>'2.5',
+            'selling_price'=>'2.5',
+            'rent_price'=>'2.6',
+            'entry_date'=>'2023-11-17',
         ]);
 
         Status::create([
