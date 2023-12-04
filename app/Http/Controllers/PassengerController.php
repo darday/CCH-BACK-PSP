@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Passenger;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class PassengerController extends Controller
@@ -35,7 +36,35 @@ class PassengerController extends Controller
      */
     public function store(Request $request)
     {
-        //
+
+        $edad = $request->age;
+        $fechaActual = Carbon::now();
+        $fechaNacimiento = $fechaActual->subYears($edad);
+        // echo "Fecha de nacimiento: " . $fechaNacimiento->format('Y-m-d');
+        $data = $request->all();
+        $data['born_date'] = $fechaNacimiento->format('Y-m-d');
+        $data['created_at'] = now();
+        $data['updated_at'] = now();
+
+        $res = Passenger::insert($data);
+        if ($res == 1) {
+            return response([
+                "messagge" => 'Pasajero Agregado',
+                "response" => 200,
+                "success" => true,
+                "data" => $data,
+
+            ]);
+        } else {
+            return response([
+                "messagge" => 'Error: No se agregó pasajero',
+                "response" => 200,
+                "success" => false,
+                "data" => $data,
+
+            ]);
+        }
+        return $data;
     }
 
     /**

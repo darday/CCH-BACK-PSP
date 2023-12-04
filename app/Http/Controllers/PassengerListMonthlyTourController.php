@@ -23,8 +23,8 @@ class PassengerListMonthlyTourController extends Controller
     public function passengerlistTourActive()
     {
         
-        $response = DB::table('passenger_list_monthly_tours')
-            ->join('monthly_tours','passenger_list_monthly_tours.monthly_tour_id', '=', 'monthly_tours.monthly_tour_id')
+        $response = DB::table('listas')
+            ->join('monthly_tours','listas.monthly_tour_id', '=', 'monthly_tours.monthly_tour_id')
             // ->join('passenger_lists','passenger_list_monthly_tours.passenger_lists_id', '=', 'passenger_lists.passenger_lists_id')
             ->where('status', '=', 1)->get();
             $data=[];
@@ -109,7 +109,9 @@ class PassengerListMonthlyTourController extends Controller
     public function store(Request $request)
     {
         // return($request->monthly_tour_id);
+        $data['monthly_tour_id'] = $request->monthly_tour_id;
         $data['description'] = $request->tour_destiny;
+        $data['status'] = "1";
         $data['created_at'] = now();
         $data['updated_at'] = now();
 

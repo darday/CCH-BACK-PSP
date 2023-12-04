@@ -15,6 +15,8 @@ class CreateListasTable extends Migration
     {
         Schema::create('listas', function (Blueprint $table) {
             $table->id("list_id");
+            $table->integer('monthly_tour_id');
+            $table->integer('status');
             $table->text('Description')->nullable();
             $table->text('varchar1')->nullable();
             $table->integer('int1')->nullable();

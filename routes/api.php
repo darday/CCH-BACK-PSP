@@ -12,6 +12,7 @@ use App\Http\Controllers\PassengerListMonthlyTourController;
 use App\Http\Controllers\TourCatalogueController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\InventoryController;
+use App\Http\Controllers\PassengerController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductWarehouseController;
 use App\Http\Controllers\StatusController;
@@ -64,6 +65,10 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     Route::get('/passengerlistTour-list',[PassengerListMonthlyTourController::class, 'index']);
     Route::get('/passengerlistTour-list-active',[PassengerListMonthlyTourController::class, 'passengerlistTourActive']);
     Route::get('/passengerlistTour-list-byID/{tour}',[PassengerListMonthlyTourController::class, 'findPassengerMonthlyTourById']);
+
+    //////////////////////// PASSENGER
+    Route::post('/passenger-create',[PassengerController::class, 'store']);
+
 
     ///////////////////////// CATALOGUE
     Route::post('/catalogue-add',[TourCatalogueController::class, 'store']); 
