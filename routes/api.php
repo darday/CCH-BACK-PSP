@@ -15,6 +15,10 @@ use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\PassengerController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductWarehouseController;
+use App\Http\Controllers\ProdutsListWarehouseController;
+use App\Http\Controllers\RequestCompleteProductsController;
+use App\Http\Controllers\RequestProductsController;
+use App\Http\Controllers\RequestProductsToWarehouseController;
 use App\Http\Controllers\StatusController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\WarehouseController;
@@ -120,6 +124,24 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     Route::post('/productsWarehouse-add',[ProductWarehouseController::class, 'store']);
     Route::post('/productsWarehouse-delete/{id}',[ProductWarehouseController::class, 'destroy']);
     Route::post('/productsWarehouse-addObservation/{id}',[ProductWarehouseController::class, 'addObservation']);
+
+    // GUIDE - LISTA PRODUCTOS php artisan make:migration create_tipodocumento_table
+    Route::get('/products-list', [ProdutsListWarehouseController::class, 'index']);
+    // GUIDE - SELECT SOLICITUD PRODUCTOS
+    Route::get('/request-products',[RequestProductsController::class, 'requestProductSelect']);
+    // Route::get('/warehouse-request-products/{warehouseRequestProductsId}',[RequestProductsController::class, 'warehouseRequestProduct']);
+    Route::post('/request-product-add',[RequestProductsToWarehouseController::class, 'store']);
+    Route::get('/request-product-list',[RequestProductsToWarehouseController::class, 'index']);
+    Route::post('/request-product-delete/{requestProducts}',[RequestProductsToWarehouseController::class, 'destroy']);
+    Route::post('/request-product-update/{requestProducts}',[RequestProductsToWarehouseController::class, 'update']);
+    Route::post('/request-product-update-status/{requestProduct}', [RequestProductsToWarehouseController::class, 'updateStatus']);
+
+    Route::post('/request-complete-product-add',[RequestProductsToWarehouseController::class, 'generateOrder']);
+    Route::get('/request-complete-product-list/{inventoryId}',[RequestCompleteProductsController::class, 'index']);
+    Route::post('/request-complete-product-delete/{requestProducts}',[RequestCompleteProductsController::class, 'destroy']);
+    Route::get('/request-product-guide-list/{requestCompleteProducts}', [RequestCompleteProductsController::class, 'productsListGuide']);
+    Route::get('/request-complete-product-title-list/{requestCompleteProducts}', [RequestCompleteProductsController::class, 'productsListTitle']);
+    
 
 
     
