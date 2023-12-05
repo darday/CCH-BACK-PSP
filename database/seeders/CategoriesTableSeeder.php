@@ -45,18 +45,17 @@ class CategoriesTableSeeder extends Seeder
         Category::create([
             'Description'=>'Electrónica',
         ]);
+        Category::create([
+            'Description'=>'Refrigerios',
+        ]);
+        Category::create([
+            'Description'=>'Desayuno',
+        ]);
+        Category::create([
+            'Description'=>'Merienda',
+        ]);
 
 
-        // User::create([
-        //     'name'=>'Admin',
-        //     'last_name'=>'Sistema',
-        //     'ci'=>'1234567890',
-        //     'email'=>'adminsistema@gmail.com',
-        //     'email_verified'=>'adminsistema@gmail.com',
-        //     'password'=>'123456789',
-        //     'password_confirmation'=>'123456789',
-        //     'rol'=>'admin',
-        //     'cellphone'=>'0961119670',
-        // ]);
+       
     }
 }

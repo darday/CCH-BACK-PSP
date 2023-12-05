@@ -60,9 +60,9 @@ class DatabaseSeeder extends Seeder
         Category::create([
             'Description'=>'Merienda',
         ]);
-        Category::create([
-            'Description'=>'Alimentos',
-        ]);
+        // Category::create([
+        //     'Description'=>'Alimentos',
+        // ]);
 
         Supplier::create([
             'name_store'=>'Comercial Guacho',
