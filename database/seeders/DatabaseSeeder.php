@@ -174,7 +174,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         Product::create([
-            'category_id'=>'14',
+            'category_id'=>'13',
             'supplier_id'=>'5',
             'description'=>'Galletas Ducales',
             'buying_price'=>'1.5',
@@ -185,8 +185,8 @@ class DatabaseSeeder extends Seeder
         ]);
 
         Product::create([
-            'category_id'=>'14',
-            'supplier_id'=>'5',
+            'category_id'=>'12',
+            'supplier_id'=>'2',
             'description'=>'Yogurt Toni',
             'buying_price'=>'0.5',
             'min_selling_price'=>'0.75',
@@ -196,7 +196,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         Product::create([
-            'category_id'=>'14',
+            'category_id'=>'11',
             'supplier_id'=>'5',
             'description'=>' Pan Supan',
             'buying_price'=>'2',

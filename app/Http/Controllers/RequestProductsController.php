@@ -26,7 +26,7 @@ class RequestProductsController extends Controller
         ->join('products', 'inventories.product_id', '=', 'products.product_id')
         ->join('categories', 'products.category_id', '=', 'categories.categories_id')
         ->join('statuses', 'inventories.status_id', '=', 'statuses.status_id')
-        ->select('product_warehouses.product_warehouses_id  as product_warehouses_id', 'products.description as product','product_warehouses.quantity','statuses.description','products.product_id as product_id','categories.categories_id as category_id','inventories.inventories_id')        
+        ->select('product_warehouses.product_warehouses_id  as product_warehouses_id', 'products.description as product','product_warehouses.quantity','statuses.description','products.product_id as product_id','categories.categories_id as category_id','inventories.inventories_id', 'categories.Description as description_products')        
         ->where('product_warehouses.warehouse_id', '=', 5)
         ->get();
         return $prodList;

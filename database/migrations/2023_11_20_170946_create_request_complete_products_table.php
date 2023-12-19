@@ -18,6 +18,8 @@ class CreateRequestCompleteProductsTable extends Migration
             $table->integer('user_id');
             $table->string('detail');
             $table->date('fecha');
+            $table->text("status_request")->nullable();
+            $table->text("status_acquisition")->nullable();
 
             $table->timestamps();
         });
