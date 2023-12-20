@@ -17,9 +17,8 @@ class RequestProductsToWarehouseController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index($userId)
     {
-
         $product = DB::table('request_products_to_warehouses')
             ->join('product_warehouses', 'request_products_to_warehouses.product_warehouses_id', '=', 'product_warehouses.product_warehouses_id')
             ->join('inventories', 'product_warehouses.inventories_id', '=', 'inventories.inventories_id')
@@ -27,15 +26,32 @@ class RequestProductsToWarehouseController extends Controller
             ->join('categories', 'products.category_id', '=', 'categories.categories_id')
             ->join('users', 'request_products_to_warehouses.user_id', '=', 'users.id')
             ->join('request_complete_products', 'request_products_to_warehouses.request_complete_products_id', '=', 'request_complete_products.request_complete_products_id')
-            ->select('request_products_to_warehouses.request_products_to_warehouses_id', 'users.rol', 'request_products_to_warehouses.quantity_products', 'products.description as description_product', 'categories.description as category_product', 'request_complete_products.detail as title_tour', 'request_complete_products.fecha as date_tour', 'products.selling_price as unitary_price', DB::raw('request_products_to_warehouses.quantity_products * products.selling_price as total_price'))
-            ->where('users.id', '=', 2)
+            ->select('request_products_to_warehouses.request_products_to_warehouses_id', 'users.rol', 'request_products_to_warehouses.quantity_products', 'products.description as description_product', 'categories.Description as category_product', 'request_complete_products.detail as title_tour', 'request_complete_products.fecha as date_tour', 'products.selling_price as unitary_price', DB::raw('request_products_to_warehouses.quantity_products * products.selling_price as total_price'))
+            ->where('users.id', '=', $userId)
             ->where('request_products_to_warehouses.status', '=', 'A')
+            ->orderBy('category_product', 'asc')
             ->get();
 
         return $product;
     }
+     
+    public function indexRequesProductsAdm($userId)
+    {
+        $product = DB::table('request_products_to_warehouses')
+            ->join('product_warehouses', 'request_products_to_warehouses.product_warehouses_id', '=', 'product_warehouses.product_warehouses_id')
+            ->join('inventories', 'product_warehouses.inventories_id', '=', 'inventories.inventories_id')
+            ->join('products', 'inventories.product_id', '=', 'products.product_id')
+            ->join('categories', 'products.category_id', '=', 'categories.categories_id')
+            ->join('users', 'request_products_to_warehouses.user_id', '=', 'users.id')
+            ->join('request_complete_products', 'request_products_to_warehouses.request_complete_products_id', '=', 'request_complete_products.request_complete_products_id')
+            ->select('request_products_to_warehouses.request_products_to_warehouses_id', 'users.rol', 'request_products_to_warehouses.quantity_products', 'products.description as description_product', 'categories.Description as category_product', 'request_complete_products.detail as title_tour', 'request_complete_products.fecha as date_tour', 'products.selling_price as unitary_price', DB::raw('request_products_to_warehouses.quantity_products * products.selling_price as total_price'))
+            ->where('users.id', '=', $userId)
+            ->where('request_products_to_warehouses.status', '=', 'A')
+            ->orderBy('category_product', 'asc')
+            ->get();
 
-
+        return $product;
+    }
 
     public function updateStatus(Request $request, $requestCompleteProductsId)
     {
@@ -141,11 +157,104 @@ class RequestProductsToWarehouseController extends Controller
             ]);
         }
     }
-
+    
+    public function addProductsAdm(Request $request)
+    {
+        $data = $request->all();
+        // Insertar datos en la tabla request_products_to_warehouse
+        $res = request_products_to_warehouse::insert($data);
+        if ($res == 1) {
+            // Obtener el product_warehouses_id y quantity_products del formulario
+            $productWarehouseId = $data['product_warehouses_id'];
+            $quantityProducts = $data['quantity_products'];
+            // Obtener el valor actual de quantity en product_warehouses
+            $currentQuantityWarehouse = DB::table('product_warehouses')
+                ->where('product_warehouses_id', $productWarehouseId)
+                ->value('quantity');
+            // dd($result);
+            // dd($currentQuantityWarehouse, $quantityProducts);
+            $inventories_id = DB::table('product_warehouses')
+                ->where('product_warehouses_id', $productWarehouseId)
+                ->value('inventories_id');
+            // dd($inventories_id);
+            $currentQuantityInventories = DB::table('inventories')
+                ->where('inventories_id', $inventories_id)
+                ->value('inWarehouse');
+            // dd($currentQuantityInventories);
+            $currentQuantityInventoriesStock = DB::table('inventories')
+                ->where('inventories_id', $inventories_id)
+                ->value('stock');
+            // dd($currentQuantityInventoriesStock);
+            if ($currentQuantityWarehouse !== null || $currentQuantityInventories !== null || $currentQuantityInventoriesStock !== null) {
+                // Realizar la resta
+                $newQuantityWarehouse = $currentQuantityWarehouse - $quantityProducts;
+                $newQuiantityInventories = $currentQuantityInventories - $quantityProducts;
+                $newQuiantityInventoriesStock = $currentQuantityInventoriesStock - $quantityProducts;
+                // Actualizar el valor de quantity en product_warehouses
+                DB::table('product_warehouses')
+                    ->where('product_warehouses_id', $productWarehouseId)
+                    ->update(['quantity' => $newQuantityWarehouse]);
+                // Actualizar el valor de quantity en inventories
+                DB::table('inventories')
+                    ->where('inventories_id', $inventories_id)
+                    ->update(['inWarehouse' => $newQuiantityInventories]);
+                // Actualizar el valor de quantity en inventories Stock
+                DB::table('inventories')
+                    ->where('inventories_id', $inventories_id)
+                    ->update(['stock' => $newQuiantityInventoriesStock]);
+                return response([
+                    "data" => $data,
+                    "message" => 'Producto Agregado Exitosamente.',
+                    "response" => 200,
+                    "success" => true,
+                ]);
+            } else {
+                return response([
+                    "data" => $data,
+                    "message" => 'Error: product_warehouses_id no encontrado.',
+                    "response" => 404,
+                    "success" => false,
+                ]);
+            }
+        } else {
+            return response([
+                "data" => $data,
+                "message" => 'Error Producto No Agregado.',
+                "response" => 500,
+                "success" => false,
+            ]);
+        }
+    }
 
     public function generateOrder(Request $request)
     {
 
+        $data = $request->all();
+        $res = request_complete_products::insert($data);
+
+        if ($res == 1) {
+            // Obtener el ID recién generado
+            $newRequestId = DB::getPdo()->lastInsertId();
+
+            return response([
+                "data" => $data,
+                "request_complete_products_id" => $newRequestId,
+                "message" => 'Pedido Generado Exitosamente.',
+                "response" => 200,
+                "success" => true,
+            ]);
+        } else {
+            return response([
+                "data" => $data,
+                "messagge" => 'Error Al Generar Pedido.',
+                "response" => 500,
+                "success" => false,
+            ]);
+        }
+    }
+
+    public function generateOrderAdm(Request $request)
+    {
         $data = $request->all();
         $res = request_complete_products::insert($data);
 
