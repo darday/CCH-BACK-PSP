@@ -26,7 +26,7 @@ class CreateMonthlyToursTable extends Migration
             $table->string('dificulty');
             $table->float('person_cost');
             $table->float('group_cost');
-            $table->float('discount');
+            $table->float('discount')->nullable();
             $table->float('income')->nullable();
             $table->float('egress')->nullable();
             $table->float('utility')->nullable();

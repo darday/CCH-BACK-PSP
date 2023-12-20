@@ -27,7 +27,11 @@ class CreatePassengerListsTable extends Migration
             $table->text('responsable')->nullable();
             $table->text('meeting_point')->nullable();
             $table->text('observation')->nullable();
-            $table->boolean('state')->nullable();
+            $table->string('passenger_type')->nullable();
+            $table->integer('id_passenger_group_leader')->nullable();
+            $table->string('img_cmp_1')->nullable();
+            $table->string('img_cmp_2')->nullable();
+            $table->integer('state')->nullable();
 
             $table->timestamps();
         });

@@ -14,7 +14,9 @@ class StatusController extends Controller
      */
     public function index()
     {
-        $category = Status::orderBy('status_id', 'asc')->get();
+        $category = Status::orderBy('status_id', 'asc')
+        ->where("category_status",'=','Productos')
+        ->get();
         return $category;
     }
 

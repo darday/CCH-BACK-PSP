@@ -66,11 +66,11 @@ class PassengerListMonthlyTourController extends Controller
 
     public function findPassengerMonthlyTourById($id)
     {
-        $response = DB::table('passenger_list_monthly_tours')->where('monthly_tour_id', '=', $id)->get();
+        $response = DB::table('listas')->where('monthly_tour_id', '=', $id)->get();
         $cont = count($response);
         if ($cont > 0) {
             return response([
-                "messagge" => 'Lista Creada',
+                "messagge" => 'Ya existe lista de pasajeros',
                 "response" => 200,
                 "success" => true,
                 "data" => $response,
@@ -78,7 +78,7 @@ class PassengerListMonthlyTourController extends Controller
             ]);
         } else {
             return response([
-                "messagge" => 'No existe lista de Psajeros',
+                "messagge" => 'No existe lista de Pasajeros',
                 "response" => 200,
                 "success" => true,
                 "data" => $response,

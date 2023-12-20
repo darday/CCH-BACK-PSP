@@ -12,7 +12,9 @@ use App\Http\Controllers\PassengerListMonthlyTourController;
 use App\Http\Controllers\TourCatalogueController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\InventoryController;
+use App\Http\Controllers\ListaController;
 use App\Http\Controllers\PassengerController;
+use App\Http\Controllers\PassengerListController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductWarehouseController;
 use App\Http\Controllers\ProdutsListWarehouseController;
@@ -24,6 +26,7 @@ use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\WarehouseController;
 use App\Models\EquipmentRent;
 use App\Models\Inventory;
+use App\Models\PassengerList;
 
 /*
 |--------------------------------------------------------------------------
@@ -64,13 +67,17 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     Route::post('/monthly-tour-update/{tour}',[MonthlyTourController::class, 'update']); 
     Route::post('/monthly-tour-update-past-tour',[MonthlyTourController::class, 'updateStatePastTour']); 
 
+    ///////////////////////// LIST (LIST FOR PASSENGER)
+    Route::post('/list-create',[ListaController::class, 'store']);
 
-    ///////////////////////// PASSENGERS-TOUR
-    Route::post('/passengerlistTour-create',[PassengerListMonthlyTourController::class, 'store']);
-    Route::get('/passengerlistTour-list',[PassengerListMonthlyTourController::class, 'index']);
+
+    ///////////////////////// PASSENGERS-TOUR (PASSENGER LIST)
+    // Route::post('/passengerlistTour-create',[PassengerListMonthlyTourController::class, 'store']); --AHORA SE USA LA API /list-create --
+    // Route::get('/passengerlistTour-list',[PassengerListMonthlyTourController::class, 'index']); --NO SE USA EN FRONT --
     Route::get('/passengerlistTour-list-active',[PassengerListMonthlyTourController::class, 'passengerlistTourActive']);
     Route::get('/passengerlistTour-list-byID/{tour}',[PassengerListMonthlyTourController::class, 'findPassengerMonthlyTourById']);
-
+    Route::post('/passengerInList-create',[PassengerListController::class, 'store']); //crea el pasajero si no existe y lo agrega a un listado de pasajeros
+    
     //////////////////////// PASSENGER
     Route::post('/passenger-create',[PassengerController::class, 'store']);
 

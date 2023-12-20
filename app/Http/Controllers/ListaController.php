@@ -35,7 +35,15 @@ class ListaController extends Controller
      */
     public function store(Request $request)
     {
-        //
+         $data['monthly_tour_id'] = $request->monthly_tour_id;
+         $data['description'] = $request->tour_destiny;
+         $data['status'] = "1";
+         $data['created_at'] = now();
+         $data['updated_at'] = now();
+ 
+         Lista::insert($data);
+         $list =  Lista::orderby('created_at','desc') ->first();
+         return $list->list_id;
     }
 
     /**

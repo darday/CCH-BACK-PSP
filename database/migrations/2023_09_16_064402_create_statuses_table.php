@@ -16,7 +16,7 @@ class CreateStatusesTable extends Migration
         Schema::create('statuses', function (Blueprint $table) {
             $table->id("status_id");
             $table->text("description");
-            $table->text("varchar1")->nullable();
+            $table->text("category_status")->nullable();
             $table->timestamps();
         });
     }

@@ -4,11 +4,16 @@ namespace Database\Seeders;
 
 use App\Models\Category;
 use App\Models\Inventory;
+use App\Models\MonthlyTour;
+use App\Models\Passenger;
+use App\Models\PassengerList;
 use App\Models\Product;
 use App\Models\ProductWarehouse;
 use App\Models\Status;
 use App\Models\Supplier;
+use App\Models\User;
 use App\Models\Warehouse;
+use GuzzleHttp\Promise\Create;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -209,27 +214,47 @@ class DatabaseSeeder extends Seeder
         Status::create([
             'status_id'=>'1',
             'description'=>'Nuevo',
-            'varchar1'=>'',
+            'category_status'=>'Productos',
         ]);
         Status::create([
             'status_id'=>'2',
             'description'=>'Bueno',
-            'varchar1'=>'',
+            'category_status'=>'Productos',
         ]);
         Status::create([
             'status_id'=>'3',
             'description'=>'Regular',
-            'varchar1'=>'',
+            'category_status'=>'Productos',
         ]);
         Status::create([
             'status_id'=>'4',
             'description'=>'Malo Funcional',
-            'varchar1'=>'',
+            'category_status'=>'Productos',
         ]);
         Status::create([
             'status_id'=>'5',
             'description'=>'Malo No funcional',
-            'varchar1'=>'',
+            'category_status'=>'Productos',
+        ]);
+        Status::create([
+            'status_id'=>'6',
+            'description'=>'No paga nada',
+            'category_status'=>'Pagos de Pasajeros',
+        ]);
+        Status::create([
+            'status_id'=>'7',
+            'description'=>'Pagado Todo',
+            'category_status'=>'Pagos de Pasajeros',
+        ]);
+        Status::create([
+            'status_id'=>'8',
+            'description'=>'Pago Parcial',
+            'category_status'=>'Pagos de Pasajeros',
+        ]);
+        Status::create([
+            'status_id'=>'9',
+            'description'=>'No Aplica - Acompañante',
+            'category_status'=>'Pagos de Pasajeros',
         ]);
 
         Inventory::create([
@@ -274,8 +299,185 @@ class DatabaseSeeder extends Seeder
             'inventories_id'=>'1',
             'product_status_id'=>'2',
         ]);
-        
 
+        User::create([
+            'name'=>'Administrador',
+            'rol'=>'admin',
+            'email'=>'adminsistema@gmail.com',
+            'password'=>'123456789'
+        ]);
+
+        User::create([
+            'name'=>'Guia 1',
+            'rol'=>'guide',
+            'email'=>'adminsistema@gmail.com2',
+            'password'=>'123456789'
+        ]);
+
+        Passenger::create([
+            'ci'=>'0603935008',
+            'name'=>'Darío Javier Janeta Paca',
+            'phone'=>'0961119670',
+            'city'=>'Riobamba',
+            'correo'=>'darday1980@gmail.com',
+            'age'=>'29',
+            'password'=>'123456789',
+        ]);
+        Passenger::create([
+            'ci'=>'0606020345',
+            'name'=>'Auki Gabriel Janeta Paca',
+            'phone'=>'0961119670',
+            'city'=>'Riobamba',
+            'correo'=>'auki@gmail.com',
+            'age'=>'18',
+            'password'=>'123456789',
+        ]);
+        Passenger::create([
+            'ci'=>'0606020313',
+            'name'=>'Maria Manuela Paca',
+            'phone'=>'0961119670',
+            'city'=>'Riobamba',
+            'correo'=>'maria@gmail.com',
+            'age'=>'53',
+            'password'=>'123456789',
+        ]);
+        Passenger::create([
+            'ci'=>'0603574125',
+            'name'=>'David Paca',
+            'phone'=>'0961119670',
+            'city'=>'Riobamba',
+            'correo'=>'david@gmail.com',
+            'age'=>'53',
+            'password'=>'123456789',
+        ]);
+        
+        
+        MonthlyTour::create([
+            'tour_name'=>'CAMPING SOBRE LAS NUBES',
+            'tour_destiny'=>'PUÑAY',
+            'description'=>'Acompalnois',
+            'include'=>'asdawdaw',
+            'img_1'=>'awdaw',
+            'img_2'=>'awdaw',
+            'state'=>'1',
+            'type'=>'camping',
+            'dificulty'=>'alta',
+            'person_cost'=>'40',
+            'group_cost'=>'35',
+            'discount'=>'0',
+            'income'=>'0',
+            'egress'=>'0',
+            'utility'=>'0',
+            'contact_phone'=>'0961119670',
+            'messagge_for_contact'=>'mensaje',
+            'departure_date'=>'2024-01-17',
+            'return_date'=>'2024-01-18',
+        ]);
+        MonthlyTour::create([
+            'tour_name'=>'PON A PRUEBA TU MENTE Y CUERPO',
+            'tour_destiny'=>'ALTAR',
+            'description'=>'Acompalnois',
+            'include'=>'asdawdaw',
+            'img_1'=>'awdaw',
+            'img_2'=>'awdaw',
+            'state'=>'1',
+            'type'=>'camping',
+            'dificulty'=>'alta',
+            'person_cost'=>'75',
+            'group_cost'=>'67',
+            'discount'=>'0',
+            'income'=>'0',
+            'egress'=>'0',
+            'utility'=>'0',
+            'contact_phone'=>'0961119670',
+            'messagge_for_contact'=>'mensaje',
+            'departure_date'=>'2024-01-17',
+            'return_date'=>'2024-01-18',
+        ]);
+        MonthlyTour::create([
+            'tour_name'=>'CAMPING EN EL CRATER DE UN VOLCÁN',
+            'tour_destiny'=>'QUILOTOA',
+            'description'=>'Acompalnois',
+            'include'=>'asdawdaw',
+            'img_1'=>'awdaw',
+            'img_2'=>'awdaw',
+            'state'=>'1',
+            'type'=>'camping',
+            'dificulty'=>'alta',
+            'person_cost'=>'40',
+            'group_cost'=>'35',
+            'discount'=>'0',
+            'income'=>'0',
+            'egress'=>'0',
+            'utility'=>'0',
+            'contact_phone'=>'0961119670',
+            'messagge_for_contact'=>'mensaje',
+            'departure_date'=>'2024-01-17',
+            'return_date'=>'2024-01-18',
+        ]);
+
+        PassengerList::create([
+            'list_id'=>'1',
+            'passenger_id'=>'1',
+            'seat'=>'3',
+            'unit_cost'=>'40',
+            'total_cost'=>'120',
+            'collected'=>'40',
+            'bus_extra'=>'0',
+            'to_collect'=>'80',
+            'bank'=>'Pichincha',
+            'responsable'=>'Guia 1',
+            'meeting_point'=>'Terminal Riobamba',
+            'observation'=>'No come carne, Dice que va a pagar el resto el d[ia de la ruta',
+            'passenger_type'=>'Responsable',
+            'id_passenger_group_leader'=>'1',            
+            'img_cmp_1'=>'img1',
+            'img_cmp_2'=>'img2',
+            'state'=>'8',
+            
+        ]);
+        PassengerList::create([
+            'list_id'=>'1',
+            'passenger_id'=>'2',
+            'seat'=>'0',
+            'unit_cost'=>'40',
+            'total_cost'=>'0',
+            'collected'=>'0',
+            'bus_extra'=>'0',
+            'to_collect'=>'0',
+            'bank'=>'Pichincha',
+            'responsable'=>'Guia 1',
+            'meeting_point'=>'Terminal Riobamba',
+            'observation'=>'No come carne, Dice que va a pagar el resto el d[ia de la ruta',
+            'passenger_type'=>'Acompañante',
+            'id_passenger_group_leader'=>'1',            
+            'img_cmp_1'=>'null',
+            'img_cmp_2'=>'null',
+            'state'=>'9',
+            
+        ]);
+        PassengerList::create([
+            'list_id'=>'1',
+            'passenger_id'=>'3',
+            'seat'=>'0',
+            'unit_cost'=>'40',
+            'total_cost'=>'0',
+            'collected'=>'0',
+            'bus_extra'=>'0',
+            'to_collect'=>'0',
+            'bank'=>'Pichincha',
+            'responsable'=>'Guia 1',
+            'meeting_point'=>'Terminal Riobamba',
+            'observation'=>'No come carne, Dice que va a pagar el resto el d[ia de la ruta',
+            'passenger_type'=>'Acompañante',
+            'id_passenger_group_leader'=>'1',            
+            'img_cmp_1'=>'null',
+            'img_cmp_2'=>'null',
+            'state'=>'9',
+            
+        ]);
+
+        
 
         
 
