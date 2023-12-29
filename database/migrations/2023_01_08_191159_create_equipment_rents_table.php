@@ -14,13 +14,18 @@ class CreateEquipmentRentsTable extends Migration
     public function up()
     {
         Schema::create('equipment_rents', function (Blueprint $table) {
-            $table->id('equipment_rent_id');
-            $table->integer('inventories_id');
-            $table->text('description');
-            $table->boolean('isActive');
-            $table->float('discount');
-            $table->string('discount_description');
-            $table->string('contact_phone');
+            $table->id('equipment_rent_id')->nullable();
+            $table->integer('inventories_id')->nullable();
+            $table->string('name')->nullable();
+            $table->text('description')->nullable();
+            $table->float('cost')->nullable();
+            $table->string('img_1')->nullable();
+            $table->boolean('state')->nullable();
+            $table->string('type')->nullable();
+            $table->boolean('isActive')->nullable();
+            $table->float('discount')->nullable();
+            $table->string('discount_description')->nullable();
+            $table->string('contact_phone')->nullable();
             $table->string('messagge_for_contact')->nullable();
             $table->float('cch_points')->nullable();
             $table->string('varchar_1')->nullable();
