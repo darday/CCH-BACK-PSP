@@ -135,6 +135,7 @@ Route::post('/request-product-update-products-withdrawal/{requestProductsComplet
 Route::get('/request-complete-products-list-rejected-retired', [RequestCompleteProductsController::class, 'indexListRejectedRetiredAdm']);
 
 Route::post('/product-add', [ProductController::class, 'store']);
+Route::post('/product-update/{idProduct}', [ProductController::class, 'update']);
 Route::post('/product-delete/{product}', [ProductController::class, 'destroy']);
 
 Route::post('/productsWarehouse-add', [ProductWarehouseController::class, 'store']);
