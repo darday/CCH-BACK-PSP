@@ -3,12 +3,14 @@
 namespace Database\Seeders;
 
 use App\Models\Category;
+use App\Models\Enterprise;
 use App\Models\Inventory;
 use App\Models\MonthlyTour;
 use App\Models\Passenger;
 use App\Models\PassengerList;
 use App\Models\Product;
 use App\Models\ProductWarehouse;
+use App\Models\SoftwareTipe;
 use App\Models\Status;
 use App\Models\Supplier;
 use App\Models\User;
@@ -502,6 +504,29 @@ class DatabaseSeeder extends Seeder
             'img_cmp_2' => 'null',
             'state' => '9',
 
+        ]);
+
+        SoftwareTipe::create([
+            'software_type_id'=>'1',
+            'description'=>'Full',
+        ]);
+        SoftwareTipe::create([
+            'software_type_id'=>'2',
+            'description'=>'Inventario',
+        ]);
+        SoftwareTipe::create([
+            'software_type_id'=>'3',
+            'description'=>'Demo',
+        ]);
+
+        Enterprise::create([
+            'enterprise_id'=>'1',
+            'enterprise_name'=>'Camping Chimborazo',
+            'phone'=>'0961119670',
+            'address'=>'Esteban Marañon y Lope Antonio de Munive',
+            'manager'=>'Luis Yumiseba',
+            'img'=>'campingchimborazo.png',
+            'software_type_id'=>'1',
         ]);
     }
 }

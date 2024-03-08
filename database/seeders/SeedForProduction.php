@@ -4,6 +4,8 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\Category;
+use App\Models\Enterprise;
+use App\Models\SoftwareTipe;
 use App\Models\Status;
 use App\Models\Supplier;
 use App\Models\User;
@@ -210,6 +212,32 @@ class SeedForProduction extends Seeder
             'rol' => 'shopkeeper',
             'email' => 'mariapaca@gmail.com',
             'password' => bcrypt('123456789')
+        ]);
+
+        SoftwareTipe::create([
+            'software_type_id'=>'1',
+            'description'=>'Full',
+            'isActive'=>'1',
+        ]);
+        SoftwareTipe::create([
+            'software_type_id'=>'2',
+            'description'=>'Inventario',
+            'isActive'=>'1',
+        ]);
+        SoftwareTipe::create([
+            'software_type_id'=>'3',
+            'description'=>'Demo',
+            'isActive'=>'1',
+        ]);
+        
+        Enterprise::create([
+            'enterprise_id'=>'1',
+            'enterprise_name'=>'Camping Chimborazo',
+            'phone'=>'0961119670',
+            'address'=>'Esteban Marañon y Lope Antonio de Munive',
+            'manager'=>'Luis Yumiseba',
+            'img'=>'campingchimborazo.png',
+            'software_type_id'=>'1',
         ]);
     }
 }
