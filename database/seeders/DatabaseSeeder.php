@@ -258,6 +258,21 @@ class DatabaseSeeder extends Seeder
             'description' => 'No Aplica - Acompañante',
             'category_status' => 'Pagos de Pasajeros',
         ]);
+        Status::create([
+            'status_id' => '10',
+            'description' => 'No pagado',
+            'category_status' => 'Creditos',
+        ]);
+        Status::create([
+            'status_id' => '11',
+            'description' => 'Pagado',
+            'category_status' => 'Creditos',
+        ]);
+        Status::create([
+            'status_id' => '12',
+            'description' => 'Vencido',
+            'category_status' => 'Creditos',
+        ]);
 
         Inventory::create([
             'product_id' => '1',
