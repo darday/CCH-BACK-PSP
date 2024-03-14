@@ -127,9 +127,58 @@ class ProductController extends Controller
      * @param  \App\Models\Product  $product
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Product $product)
+    public function update(Request $request,  $id)
     {
-        //
+
+        $data = ($request->all());
+
+        $directory = storage_path() . '/app/public/products/';
+        if (!file_exists($directory)) {
+            mkdir($directory, 0777, true); // Crea la carpeta con permisos 0777 y habilita la creación de carpetas anidadas
+        }
+
+        
+
+        if ($request->hasFile('img')) {
+            $prod =  Product::where('product_id', $id)->firstOrFail();
+            Storage::delete('public/' . $prod->img_1);
+
+            $name_img = Str::random(10) . $request->file('img')->getClientOriginalName();
+            $ruta = storage_path() . '/app/public/products/' . $name_img;
+            $img = Image::make($request->file('img'));
+            $img->orientate();
+            $img->resize(1200, null, function ($constraint) {
+                $constraint->aspectRatio();
+            })->save($ruta);
+            $img->destroy();
+
+
+            $path1 = 'products/' . $name_img;
+            $data['img'] = $path1;
+            $data['img'] = $path1;
+        }
+
+        $data['updated_at'] = Carbon::now();
+
+        $res = Product::where('product_id', $id)->update($data);    
+
+        if ($res == 1) {
+            return response([
+                "data" => $data,
+                "messagge" => 'Producto Editado Exitosamente.',
+                "response" => 200,
+                "success" => true,
+
+            ]);
+        } else {
+            return response([
+                "data" => $data,
+                "messagge" => 'Error Producto No Editado.',
+                "response" => 500,
+                "success" => false,
+
+            ]);
+        }
     }
 
     /**
