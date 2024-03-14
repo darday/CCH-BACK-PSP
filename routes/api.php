@@ -11,6 +11,7 @@ use App\Http\Controllers\MonthlyTourController;
 use App\Http\Controllers\PassengerListMonthlyTourController;
 use App\Http\Controllers\TourCatalogueController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\EnterpriseController;
 use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\ListaController;
 use App\Http\Controllers\PassengerController;
@@ -176,3 +177,5 @@ Route::get('/request-product-guide-list/{requestCompleteProducts}/{userId}', [Re
 Route::get('/request-complete-product-title-list/{requestCompleteProducts}', [RequestCompleteProductsController::class, 'productsListTitle']);
 Route::post('/request-complete-update-status/{requestProduct}', [RequestCompleteProductsController::class, 'updateStatusRequestHistory']);
 // Route::post('/request-complete-status/{requestProductStatus}', [RequestCompleteProductsController::class, 'statusRequestHistory']);
+
+Route::get('/enterprise', [EnterpriseController::class, 'index']);

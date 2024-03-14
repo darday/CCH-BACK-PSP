@@ -15,7 +15,7 @@ class CreateIncomesToursTable extends Migration
     {
         Schema::create('incomes_tours', function (Blueprint $table) {
             $table->id('income_tour_id');
-            $table->foreignId('monthly_tour_id');
+            $table->integer('expense_tour_id');
             $table->float('quantity');
             $table->text('description');
             $table->float('unit_cost');
