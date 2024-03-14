@@ -15,7 +15,7 @@ class CreateExpensesToursTable extends Migration
     {
         Schema::create('expenses_tours', function (Blueprint $table) {
             $table->id('expense_tour_id');
-            $table->foreignId('monthly_tour_id');
+            $table->integer('list_id');
             $table->float('quantity');
             $table->text('description');
             $table->float('unit_cost');
