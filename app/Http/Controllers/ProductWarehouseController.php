@@ -26,7 +26,6 @@ class ProductWarehouseController extends Controller
 
     public function addObservation($id, Request $request)
     {
-
         // return($request);
         $query = DB::table('product_warehouses')
             ->where('product_warehouses_id', $id)
@@ -61,34 +60,85 @@ class ProductWarehouseController extends Controller
             ->join('categories', 'categories.categories_id', '=', 'products.category_id')
             ->join('statuses', 'statuses.status_id', '=', 'inventories.status_id')
             ->join('suppliers', 'products.supplier_id', '=', 'suppliers.suppliers_id')
-            ->select('warehouses.warehouse_id as warehouse_id', 'warehouses.description as warehouse', 
-            'product_warehouses.quantity as quantity', 'products.product_id as product_id','products.img as img', 
-            'products.description as product', 'inventories.status_id as status_id', 'statuses.description as status',
-            'product_warehouses.observation', 'product_warehouses.product_warehouses_id' , 
-            'product_warehouses.inventories_id', 
-            'suppliers.name_store')
+            ->select(
+                'warehouses.warehouse_id as warehouse_id',
+                'warehouses.description as warehouse',
+                'product_warehouses.quantity as quantity',
+                'products.product_id as product_id',
+                'products.img as img',
+                'products.description as product',
+                'inventories.status_id as status_id',
+                'statuses.description as status',
+                'product_warehouses.observation',
+                'product_warehouses.product_warehouses_id',
+                'product_warehouses.inventories_id',
+                'suppliers.name_store',
+                'categories.Description AS category'
+            )
             // ->orderBy('products.description')
             ->where('warehouses.warehouse_id', '=', $id)
             ->get();
 
 
-            // // // // ->join('product_warehouses', 'product_warehouses.warehouse_id', '=', 'warehouses.warehouse_id')
-            // // // // // ->join('inventories', 'inventories.product_id', '=', 'product_warehouses.product_id')
-            // // // // ->join('inventories', function (JoinClause $join) {
-            // // // //     $join->on('inventories.product_id', '=', 'product_warehouses.product_id')
-            // // // //         ->on('inventories.status_id', '=', 'product_warehouses.product_status_id');
-            // // // // })
-            // // // // ->join('products', 'products.product_id', '=', 'inventories.product_id')
-            // // // // ->join('categories', 'categories.categories_id', '=', 'products.category_id')
-            // // // // ->join('statuses', 'statuses.status_id', '=', 'inventories.status_id')
-            // // // // ->join('suppliers', 'products.supplier_id', '=', 'suppliers.suppliers_id')
-            // // // // ->select('warehouses.warehouse_id as warehouse_id', 'warehouses.description as warehouse', 'product_warehouses.quantity as quantity', 'products.product_id as product_id', 'products.description as product', 'inventories.status_id as status_id', 'statuses.description as status', 'product_warehouses.observation', 'product_warehouses.product_warehouses_id', 'suppliers.name_store')
-            // // // // // ->orderBy('products.description')
-            // // // // ->where('warehouses.warehouse_id', '=', $id)
-            // // // // ->get();
+        // // // // ->join('product_warehouses', 'product_warehouses.warehouse_id', '=', 'warehouses.warehouse_id')
+        // // // // // ->join('inventories', 'inventories.product_id', '=', 'product_warehouses.product_id')
+        // // // // ->join('inventories', function (JoinClause $join) {
+        // // // //     $join->on('inventories.product_id', '=', 'product_warehouses.product_id')
+        // // // //         ->on('inventories.status_id', '=', 'product_warehouses.product_status_id');
+        // // // // })
+        // // // // ->join('products', 'products.product_id', '=', 'inventories.product_id')
+        // // // // ->join('categories', 'categories.categories_id', '=', 'products.category_id')
+        // // // // ->join('statuses', 'statuses.status_id', '=', 'inventories.status_id')
+        // // // // ->join('suppliers', 'products.supplier_id', '=', 'suppliers.suppliers_id')
+        // // // // ->select('warehouses.warehouse_id as warehouse_id', 'warehouses.description as warehouse', 'product_warehouses.quantity as quantity', 'products.product_id as product_id', 'products.description as product', 'inventories.status_id as status_id', 'statuses.description as status', 'product_warehouses.observation', 'product_warehouses.product_warehouses_id', 'suppliers.name_store')
+        // // // // // ->orderBy('products.description')
+        // // // // ->where('warehouses.warehouse_id', '=', $id)
+        // // // // ->get();
 
         return $product;
     }
+
+    /****************************************** EDITAR ESTADO Y CANTIDAD EN BODEGAS *************************************/
+    public function warehouseStateQuantityUpdate($id)
+    {
+        $product = DB::table('product_warehouses')
+            ->where('product_warehouses_id', $id)
+            ->value('inventories_id');
+        dd($product);
+        // return $product;
+
+        if ($product == 1) {
+            return response([
+                // "data" => $data,
+                "messagge" => 'Observación Agregada',
+                "response" => 200,
+                "success" => true,
+            ]);
+        } else {
+            return response([
+                // "data" => $data,
+                "messagge" => 'Error, no se ha agregado observación.',
+                "response" => 200,
+                "success" => false,
+            ]);
+        }
+    }
+
+
+    public function inventorieQuiantityInWarehouse($id)
+    {
+        $inventory = DB::table('product_warehouses')
+            ->join('inventories', 'product_warehouses.inventories_id', '=', 'inventories.inventories_id')
+            ->join('warehouses', 'product_warehouses.warehouse_id', '=', 'warehouses.warehouse_id')
+            ->join('products', 'inventories.product_id', '=', 'products.product_id')
+            ->select('product_warehouses.product_warehouses_id', 'product_warehouses.quantity', 'inventories.inventories_id', 'inventories.stock', 'inventories.withoutWarehouse', 'warehouses.warehouse_id', 'warehouses.description', 'products.description as nombreProducto')
+            ->where('product_warehouses.inventories_id', $id)
+
+            ->get();
+
+        return $inventory;
+    }
+
 
     /**
      * Show the form for creating a new resource.

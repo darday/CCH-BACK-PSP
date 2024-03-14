@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Passenger;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class PassengerController extends Controller
 {
@@ -36,13 +37,12 @@ class PassengerController extends Controller
      */
     public function store(Request $request)
     {
-
-        $edad = $request->age;
-        $fechaActual = Carbon::now();
-        $fechaNacimiento = $fechaActual->subYears($edad);
+        // $edad = $request->age;
+        // $fechaActual = Carbon::now();
+        // $fechaNacimiento = $fechaActual->subYears($edad);
         // echo "Fecha de nacimiento: " . $fechaNacimiento->format('Y-m-d');
         $data = $request->all();
-        $data['born_date'] = $fechaNacimiento->format('Y-m-d');
+        // $data['born_date'] = $fechaNacimiento->format('Y-m-d');
         $data['created_at'] = now();
         $data['updated_at'] = now();
 
@@ -65,6 +65,25 @@ class PassengerController extends Controller
             ]);
         }
         return $data;
+    }
+
+    public function getPassengerName($ci)
+    {
+        try {
+            $passengerName = DB::table('passenger_lists')
+                ->join('passengers', 'passenger_lists.passenger_group_leader_ci', '=', 'passengers.ci')
+                ->select('passengers.name')
+                ->where('passenger_lists.passenger_group_leader_ci', $ci)
+                ->first();
+
+            if ($passengerName) {
+                return response()->json(['name' => $passengerName->name]);
+            }
+
+            return response()->json(['error' => 'Passenger not found'], 404);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Internal Server Error'], 500);
+        }
     }
 
     /**
@@ -96,9 +115,30 @@ class PassengerController extends Controller
      * @param  \App\Models\Passenger  $passenger
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Passenger $passenger)
+    public function update(Request $request, Passenger $passenger, $ci)
     {
-        //
+        // Recupera los datos del cuerpo de la solicitud
+        $data = $request->all();
+        // $data['created_at'] = now();
+        // $data['updated_at'] = now();
+
+        $res = Passenger::where('passenger_id', $ci)->update($data);
+        if ($res == 1) {
+            return response([
+                "data" => $data,
+                "messagge" => 'Datos de Pasajero Actualizado Exitosamente',
+                "response" => 200,
+                "success" => true,
+
+            ]);
+        } else {
+            return response([
+                "messagge" => 'Error: Datos de Pasajero No Actualizado ',
+                "response" => 200,
+                "success" => false,
+
+            ]);
+        }
     }
 
     /**

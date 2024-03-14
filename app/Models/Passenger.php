@@ -9,3 +9,4 @@ class Passenger extends Model
 {
     use HasFactory;
 }
+

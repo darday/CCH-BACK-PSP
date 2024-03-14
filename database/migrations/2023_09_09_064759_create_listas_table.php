@@ -18,6 +18,7 @@ class CreateListasTable extends Migration
             $table->integer('monthly_tour_id');
             $table->integer('status');
             $table->text('Description')->nullable();
+            $table->text('status_list')->nullable();
             $table->text('varchar1')->nullable();
             $table->integer('int1')->nullable();
             $table->timestamps();

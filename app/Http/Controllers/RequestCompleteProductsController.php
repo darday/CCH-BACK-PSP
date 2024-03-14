@@ -18,7 +18,7 @@ class RequestCompleteProductsController extends Controller
     {
         $request_complete = DB::table('request_complete_products')
             ->join('users', 'request_complete_products.user_id', '=', 'users.id')
-            ->select('request_complete_products.request_complete_products_id', 'users.name', 'users.last_name', 'request_complete_products.detail', 'request_complete_products.fecha', 'request_complete_products.status_acquisition')
+            ->select('request_complete_products.request_complete_products_id', 'users.name', 'users.last_name','users.rol', 'request_complete_products.detail', 'request_complete_products.fecha', 'request_complete_products.status_acquisition')
             ->where('users.id', '=', $id)
             ->where('request_complete_products.status_request', '=', 'finalizado')
             // ->orderBy('products.description')
@@ -103,10 +103,10 @@ class RequestCompleteProductsController extends Controller
                 'request_products_to_warehouses.quantity_products',
                 'products.description as description_product',
                 'categories.description as category_product',
-                'products.selling_price as unitary_price',
+                'products.buying_price as unitary_price',
                 'request_complete_products.detail as detail_title',
                 'request_complete_products.status_acquisition',
-                DB::raw('request_products_to_warehouses.quantity_products * products.selling_price as total_price')
+                DB::raw('request_products_to_warehouses.quantity_products * products.buying_price as total_price')
             )
             // ->where('users.id', '=', $userId)
             ->where('request_complete_products.request_complete_products_id', '=', $requestCompleteProductsId)

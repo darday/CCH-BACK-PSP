@@ -16,7 +16,7 @@ class CreatePassengerListsTable extends Migration
         Schema::create('passenger_lists', function (Blueprint $table) {
             $table->id('passenger_lists_id');
             $table->integer('list_id');
-            $table->integer('passenger_id');
+            $table->text('passenger_ci');
             $table->integer('seat')->nullable();
             $table->float('unit_cost')->nullable();
             $table->float('total_cost')->nullable();
@@ -28,10 +28,11 @@ class CreatePassengerListsTable extends Migration
             $table->text('meeting_point')->nullable();
             $table->text('observation')->nullable();
             $table->string('passenger_type')->nullable();
-            $table->integer('id_passenger_group_leader')->nullable();
+            $table->text('passenger_group_leader_ci')->nullable();
             $table->string('img_cmp_1')->nullable();
             $table->string('img_cmp_2')->nullable();
             $table->integer('state')->nullable();
+            $table->text('state_passenger')->nullable();
 
             $table->timestamps();
         });

@@ -26,7 +26,10 @@ class PassengerListMonthlyTourController extends Controller
         $response = DB::table('listas')
             ->join('monthly_tours','listas.monthly_tour_id', '=', 'monthly_tours.monthly_tour_id')
             // ->join('passenger_lists','passenger_list_monthly_tours.passenger_lists_id', '=', 'passenger_lists.passenger_lists_id')
-            ->where('status', '=', 1)->get();
+         // ->select('listas.Description')
+            ->where('listas.status_list', '=', 'Activo')
+            // ->where('status', '=', 1)
+            ->get();
             $data=[];
             $cont=0;
 
@@ -118,11 +121,6 @@ class PassengerListMonthlyTourController extends Controller
         Lista::insert($data);
         $list =  Lista::orderby('created_at','desc') ->first();
         return $list->list_id;
-
-
-
-
-
         $data['passenger_lists_id'] = $request->monthly_tour_id;
         $data['monthly_tour_id'] = $request->monthly_tour_id;
         $data['status'] = 1;

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Inventory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Mockery\Undefined;
 
 class InventoryController extends Controller
 {
@@ -16,43 +17,80 @@ class InventoryController extends Controller
     public function showInventoryById($id)
     {
         $inventory = DB::table('inventories')
-        ->join('products', 'inventories.product_id', '=', 'products.product_id')
-        ->join('categories', 'products.category_id', '=', 'categories.categories_id')
-        ->join('suppliers', 'products.supplier_id', '=', 'suppliers.suppliers_id')
-        ->join('statuses', 'inventories.status_id', '=', 'statuses.status_id')
-        ->select('inventories.inventories_id', 'inventories.stock', 'products.description as product', 
-        'products.product_id as product_id', 'products.rent_price as rent_price','products.img as img',  
-        'categories.description as category', 'statuses.description as status', 'statuses.status_id as status_id', 
-        'inventories.inWarehouse', 'inventories.withoutWarehouse', 'suppliers.name_store',
-        'inventories.*')
-        ->orderBy('products.description', 'asc')
-        ->orderBy('statuses.description', 'asc')
-        ->where('inventories_id', '=', $id)
-        ->get();
+            ->join('products', 'inventories.product_id', '=', 'products.product_id')
+            ->join('categories', 'products.category_id', '=', 'categories.categories_id')
+            ->join('suppliers', 'products.supplier_id', '=', 'suppliers.suppliers_id')
+            ->join('statuses', 'inventories.status_id', '=', 'statuses.status_id')
+            ->select(
+                'inventories.inventories_id',
+                'inventories.stock',
+                'products.description as product',
+                'products.product_id as product_id',
+                'products.rent_price as rent_price',
+                'products.img as img',
+                'categories.description as category',
+                'statuses.description as status',
+                'statuses.status_id as status_id',
+                'inventories.inWarehouse',
+                'inventories.withoutWarehouse',
+                'suppliers.name_store',
+                'inventories.*'
+            )
+            ->orderBy('products.description', 'asc')
+            ->orderBy('statuses.description', 'asc')
+            ->where('inventories_id', '=', $id)
+            ->get();
 
         return $inventory;
-
-
     }
 
 
 
+    // public function index()
+    // {
+    //     // $inventory = DB::table('products')
+    //     //     ->join('categories', 'products.category_id', '=', 'categories.categories_id')
+    //     //     ->join('suppliers', 'products.supplier_id', '=', 'suppliers.suppliers_id')
+    //     //     ->select('suppliers.name_store as supplier', 'categories.description as category', 'products.*')
+    //     //     ->orderBy('products.description')
+    //     //     ->get();
+    //     $inventory = DB::table('inventories')
+    //         ->join('products', 'inventories.product_id', '=', 'products.product_id')
+    //         ->join('categories', 'products.category_id', '=', 'categories.categories_id')
+    //         ->join('suppliers', 'products.supplier_id', '=', 'suppliers.suppliers_id')
+    //         ->join('statuses', 'inventories.status_id', '=', 'statuses.status_id')
+    //         ->select('inventories.inventories_id', 'inventories.stock', 'products.description as product', 'products.product_id as product_id',  'categories.description as category', 'statuses.description as status', 'statuses.status_id as status_id', 'inventories.inWarehouse', 'inventories.withoutWarehouse', 'suppliers.name_store', 'inventories.*')
+    //         ->orderBy('products.description', 'asc')
+    //         ->orderBy('statuses.description', 'asc')
+    //         ->get();
+
+    //     return $inventory;
+    // }
+
     public function index()
     {
-        // $inventory = DB::table('products')
-        //     ->join('categories', 'products.category_id', '=', 'categories.categories_id')
-        //     ->join('suppliers', 'products.supplier_id', '=', 'suppliers.suppliers_id')
-        //     ->select('suppliers.name_store as supplier', 'categories.description as category', 'products.*')
-        //     ->orderBy('products.description')
-        //     ->get();
         $inventory = DB::table('inventories')
             ->join('products', 'inventories.product_id', '=', 'products.product_id')
             ->join('categories', 'products.category_id', '=', 'categories.categories_id')
             ->join('suppliers', 'products.supplier_id', '=', 'suppliers.suppliers_id')
             ->join('statuses', 'inventories.status_id', '=', 'statuses.status_id')
-            ->select('inventories.inventories_id', 'inventories.stock', 'products.description as product', 'products.product_id as product_id',  'categories.description as category', 'statuses.description as status', 'statuses.status_id as status_id', 'inventories.inWarehouse', 'inventories.withoutWarehouse', 'suppliers.name_store','inventories.*')
+            ->select('inventories.inventories_id', 'products.product_id', 'products.buying_price as unit_price_product', 'inventories.stock', 'products.description as product', 'products.product_id as product_id',  'categories.description as category', 'statuses.description as status', 'statuses.status_id as status_id', 'inventories.inWarehouse', 'inventories.withoutWarehouse', 'suppliers.name_store', 'inventories.*', DB::raw('inventories.stock * products.buying_price as total_price'))
             ->orderBy('products.description', 'asc')
             ->orderBy('statuses.description', 'asc')
+            ->get();
+
+        return $inventory;
+    }
+
+    public function inventorieQuiantityInWarehouses($id)
+    {
+        $inventory = DB::table('inventories')
+            ->join('product_warehouses', 'inventories.inventories_id', '=', 'product_warehouses.inventories_id')
+            ->join('warehouses', 'product_warehouses.warehouse_id', '=', 'warehouses.warehouse_id')
+            ->join('products', 'inventories.product_id', '=', 'products.product_id')
+            ->select('product_warehouses.product_warehouses_id', 'product_warehouses.quantity', 'inventories.inventories_id', 'inventories.stock', 'inventories.withoutWarehouse', 'warehouses.warehouse_id', 'warehouses.description', 'products.description as nombreProducto')
+            ->where('inventories.inventories_id', $id)
+
             ->get();
 
         return $inventory;
@@ -211,17 +249,17 @@ class InventoryController extends Controller
                     ]);
 
                 $messagge = "Producto Actualizado Exitosamente";
-            }else{
+            } else {
                 $messagge = "No se puede actualizar el producto al mismo estado";
                 $query = 0;
             }
         } else {
             $query1 = DB::table('inventories')
-                    ->where('inventories_id', $request->inventories_id)
-                    ->update([
-                        'withoutWarehouse' => $productSelected[0]['withoutWarehouse'] - $request->quantity,
-                        'stock' => $productSelected[0]['stock'] - $request->quantity,
-                    ]); 
+                ->where('inventories_id', $request->inventories_id)
+                ->update([
+                    'withoutWarehouse' => $productSelected[0]['withoutWarehouse'] - $request->quantity,
+                    'stock' => $productSelected[0]['stock'] - $request->quantity,
+                ]);
 
             $query = DB::table('inventories')->insert([
                 'product_id' => $productSelected[0]['product_id'],
@@ -248,6 +286,168 @@ class InventoryController extends Controller
                 "response" => 200,
                 "success" => false,
             ]);
+        }
+    }
+
+    public function updateWarehouseStatusAndQuantity($inventoriesId, $productsId)
+    {
+        return 'david paca';
+    }
+
+    public function updateWarehousesStatesQuantity(Request $request, $inventoriesId, $productsId)
+    {
+        $data = $request->all();
+        // Acceder al dato de stock
+        if (isset($data['stock'])) {
+            $stockSend = $data['stock'];
+            // var_dump('Valor de stock:', $stock);
+        }
+        // else {
+        //     var_dump('No se recibió el dato de stock');
+        // }
+        if (isset($data['status_id'])) {
+            $statusIdSend = $data['status_id'];
+            echo 'Valor de status_id:', $statusIdSend, '<br>';
+        }
+
+        // Verificar si existe un registro con el status_id igual a $statusIdSend
+        $existsStatusId = DB::table('inventories')
+            ->where('product_id', $productsId)
+            ->where('status_id', $statusIdSend)
+            ->exists();
+        // echo 'Valor EXISTENTE:::', $existsStatusId, '<br>';
+
+        if (!$existsStatusId) {
+            // echo 'No existe ningún registro en la base de datos con status_id igual a ', $statusIdSend;
+
+            // return response()->json([
+            //     'message' => 'No existe productos en bodegas asignados con el estado seleccionado ' . $statusIdSend,
+            //     'success' => false,
+            // ], 404);
+
+            return response([
+                "message" => "No existen productos en bodegas asignados con el estado seleccionado",
+                "success" => false
+            ]);
+        } else {
+
+            $inventoryProductStock = DB::table('inventories')
+                // ->join('products', 'inventories.product_id', '=', 'products.product_id')
+                ->where('inventories.inventories_id', $inventoriesId)
+                ->where('inventories.product_id', $productsId)
+                ->value('stock');
+            // return $inventoryProductStock;
+            $inventoryProductInWarehouse = DB::table('inventories')
+                ->where('inventories_id', $inventoriesId)
+                ->where('product_id', $productsId)
+                ->value('inWarehouse');
+            // // return $inventoryProductInWarehouse;
+            $productWarehouseQuantity = DB::table('product_warehouses')
+                ->where('inventories_id', $inventoriesId)
+                ->value('quantity');
+            // return $productWarehouseQuantity;
+            if ($inventoryProductStock !== null || $inventoryProductInWarehouse !== null || $productWarehouseQuantity !== null) {
+                //     // Realizar la Restas
+                $newQuiantityInventoriesStock = $inventoryProductStock - $stockSend;
+                // var_dump('Valor de la resta de STOCK:', $newQuiantityInventoriesStock);
+                $newQuiantityInventoriesInWarehouse = $inventoryProductInWarehouse - $stockSend;
+                // var_dump('Valor de la resta de INWAREHOUSE:', $newQuiantityInventoriesInWarehouse);
+                $newQuiantityProductWarehouse = $productWarehouseQuantity - $stockSend;
+                // var_dump('Valor de la resta de QUIANTITY PRODUCT_WAREHOUSES:', $newQuiantityProductWarehouse);
+                // Actualizar el valor de STOCK: 
+                DB::table('inventories')
+                    ->where('inventories_id', $inventoriesId)
+                    ->where('product_id', $productsId)
+                    ->update(['stock' => $newQuiantityInventoriesStock]);
+                // Actualizar el valor de IN WAREHOUSE: 
+                DB::table('inventories')
+                    ->where('inventories_id', $inventoriesId)
+                    ->where('product_id', $productsId)
+                    ->update(['inWarehouse' => $newQuiantityInventoriesInWarehouse]);
+                // Actualizar el valor de QUANTITY - PRODUCT WAREHOUSE: 
+                DB::table('product_warehouses')
+                    ->where('inventories_id', $inventoriesId)
+                    // ->where('product_id', $productsId)
+                    ->update(['quantity' => $newQuiantityProductWarehouse]);
+
+                // if (isset($data['status_id'])) {
+                //     $statusIdSend = $data['status_id'];
+                //     echo 'Valor de status_id:', $statusIdSend, '<br>';
+                // }
+                // if (!isset($statusIdSend)) {
+                // if ($inventoriesId > 0) {
+                //     // Si $statusIdSend no está definido, crea un nuevo registro en la tabla 'inventories'
+                //     $newInventoryId = DB::table('inventories')->insertGetId([
+                //         'product_id' => $productsId,
+                //         'stock' => $stockSend,
+                //         'withoutWarehouse' => $stockSend,
+                //         'inWarehouse' => 0,
+                //         'status_id' => $statusIdSend // Como $statusIdSend no está definido, asignamos NULL
+                //     ]);
+
+                //     // Verifica si se insertó correctamente el nuevo registro
+                //     if ($newInventoryId) {
+                //         echo 'Se insertó un nuevo registro en inventories con ID:', $newInventoryId, '<br>';
+                //     } else {
+                //         echo 'Error al insertar el nuevo registro en inventories<br>';
+                //     }
+                // } else {
+                $sumInventoryStatusId1 = DB::table('inventories')
+                    ->where('inventories.product_id', $productsId)
+                    ->where('inventories.status_id', $statusIdSend)
+                    ->value('stock');
+                echo 'Valor de STOCK según las condiciones:', $sumInventoryStatusId1, '<br>';
+                $sumInventoryStatusId2 = DB::table('inventories')
+                    ->where('inventories.product_id', $productsId)
+                    ->where('inventories.status_id', $statusIdSend)
+                    ->value('inWarehouse');
+                echo 'Valor de IN WAREHOUSE según las condiciones:', $sumInventoryStatusId2, '<br>';
+                if ($sumInventoryStatusId1 !== null || $sumInventoryStatusId2 !== null) {
+                    $newSumInventoryStatusId1 = $sumInventoryStatusId1 + $stockSend;
+                    var_dump('Valor de la suma de STOCK:', $newSumInventoryStatusId1);
+                    $newSumInventoryStatusId2 =  $sumInventoryStatusId2 + $stockSend;
+                    var_dump('Valor de la suma de IN WAREHOUSE:', $newSumInventoryStatusId2);
+                    DB::table('inventories')
+                        // ->where('inventories_id', $inventoriesId)
+                        // ->where('product_id', $productsId)
+                        ->where('status_id', $statusIdSend)
+                        ->update(['stock' => $newSumInventoryStatusId1]);
+                    // Actualizar el valor de IN WAREHOUSE: 
+                    DB::table('inventories')
+                        // ->where('inventories_id', $inventoriesId)
+                        // ->where('product_id', $productsId)
+                        ->where('status_id', $statusIdSend)
+                        ->update(['inWarehouse' => $newSumInventoryStatusId2]);
+                    // OBTENIENDO EL NUEVO ID DE INVENTORIES ID: 
+                    $getNewInventoriesId = DB::table('inventories')
+                        // ->where('inventories.product_id', $productsId)
+                        ->where('inventories.status_id', $statusIdSend)
+                        ->value('inventories_id');
+                    echo 'Valor de de NEW INVENTORIES ID:', $getNewInventoriesId, '<br>';
+                    // OBTENIENDO VALOR DE QUIANTITY EN PRODUCT WAREHOUSE: 
+                    $sumProductWarehouseStatus = DB::table('product_warehouses')
+                        // ->where('inventories.product_id', $productsId)
+                        ->where('product_warehouses.inventories_id', $getNewInventoriesId)
+                        ->value('quantity');
+                    echo 'Valor de de QUANTITY:', $sumProductWarehouseStatus, '<br>';
+                    if ($sumProductWarehouseStatus !== null) {
+                        $newSumProductWarehouseStatus = $sumProductWarehouseStatus + $stockSend;
+                        echo 'Valor de de NEW QUANTITY SUMA:', $newSumProductWarehouseStatus, '<br>';
+                        // Actualizar el valor de IN WAREHOUSE: 
+                        DB::table('product_warehouses')
+                            ->where('inventories_id', $getNewInventoriesId)
+                            ->update(['quantity' => $newSumProductWarehouseStatus]);
+                    }
+                }
+                // }
+            } else {
+                return response([
+                    // "data" => $data,
+                    "message" => 'Error: No encontrado VALOR.',
+                    "response" => 404,
+                    "success" => false,
+                ]);
+            }
         }
     }
 

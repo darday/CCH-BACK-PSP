@@ -56,6 +56,7 @@ Route::middleware('auth:api')->get('/all-users', [UserController::class, 'all_us
 // Route::middleware('auth:api')->get('/user_info{id}',[UserController::class, 'all_users']);
 
 Route::get('/user_info/{id}', [UserController::class, 'user_info']);
+Route::get('/user-guide-select', [UserController::class, 'user_guide_select']);
 
 ////////////////////////// TOURS
 Route::post('/monthly-tour-add', [MonthlyTourController::class, 'store']);
@@ -67,19 +68,29 @@ Route::post('/monthly-tour-delete/{tour}', [MonthlyTourController::class, 'destr
 Route::post('/monthly-tour-update/{tour}', [MonthlyTourController::class, 'update']);
 Route::post('/monthly-tour-update-past-tour', [MonthlyTourController::class, 'updateStatePastTour']);
 
-    ///////////////////////// LIST (LIST FOR PASSENGER)
-    Route::post('/list-create',[ListaController::class, 'store']);
+///////////////////////// LIST (LIST FOR PASSENGER)
+Route::post('/list-create', [ListaController::class, 'store']);
+Route::post('/list-delete/{lists_id}', [ListaController::class, 'destroy']);
 
 
-    ///////////////////////// PASSENGERS-TOUR (PASSENGER LIST)
-    // Route::post('/passengerlistTour-create',[PassengerListMonthlyTourController::class, 'store']); --AHORA SE USA LA API /list-create --
-    // Route::get('/passengerlistTour-list',[PassengerListMonthlyTourController::class, 'index']); --NO SE USA EN FRONT --
-    Route::get('/passengerlistTour-list-active',[PassengerListMonthlyTourController::class, 'passengerlistTourActive']);
-    Route::get('/passengerlistTour-list-byID/{tour}',[PassengerListMonthlyTourController::class, 'findPassengerMonthlyTourById']);
-    Route::post('/passengerInList-create',[PassengerListController::class, 'store']); //crea el pasajero si no existe y lo agrega a un listado de pasajeros
-    
-    //////////////////////// PASSENGER
-    Route::post('/passenger-create',[PassengerController::class, 'store']);
+///////////////////////// PASSENGERS-TOUR (PASSENGER LIST)
+// Route::post('/passengerlistTour-create',[PassengerListMonthlyTourController::class, 'store']); --AHORA SE USA LA API /list-create --
+// Route::get('/passengerlistTour-list',[PassengerListMonthlyTourController::class, 'index']); --NO SE USA EN FRONT --
+Route::get('/passengerlistTour-list-active', [PassengerListMonthlyTourController::class, 'passengerlistTourActive']);
+Route::get('/passengerlistTour-list-byID/{tour}', [PassengerListMonthlyTourController::class, 'findPassengerMonthlyTourById']);
+Route::post('/passengerInList-create', [PassengerListController::class, 'store']); //crea el pasajero si no existe y lo agrega a un listado de pasajeros
+
+//////////////////////// PASSENGER//////////////////////////////////
+Route::post('/passenger-create', [PassengerController::class, 'store']);
+Route::post('/passenger-update/{ci}', [PassengerController::class, 'update']);
+Route::get('passenger-name/{ci}', [PassengerController::class, 'getPassengerName']);
+//////////////////////// PASSENGER LIST//////////////////////////////////
+Route::post('/passenger-list-create', [PassengerListController::class, 'store']);
+Route::get('/list-passenger-list/{list_id}', [PassengerListController::class, 'listOfPassengers']);
+Route::post('/list-passenger-delete/{passenger_lists_id}', [PassengerListController::class, 'destroy']);
+Route::get('/list-passenger-list-complete/{passenger_lists_id}', [PassengerListController::class, 'listOfPassengersComplete']);
+Route::post('/passenger-list-update/{passenger_list_id}', [PassengerListController::class, 'update']);
+
 
 
 ///////////////////////// CATALOGUE
@@ -117,12 +128,18 @@ Route::get('/product-list', [ProductController::class, 'index']);
 Route::get('/supplier-list', [SupplierController::class, 'index']);
 Route::get('/warehouse-list', [WarehouseController::class, 'index']);
 Route::get('/status-list', [StatusController::class, 'index']);
+Route::post('/warehouse-update/{inventories_id}/{products_id}', [InventoryController::class, 'updateWarehousesStatesQuantity']);
+// Route::post('warehouse-update/{inventoriesId}/{productId}', [WarehouseController::class, 'updateWarehousesStatesQuantity']);
+Route::post('/warehouse-update-status-quantity/{inventories_id}', [InventoryController::class, 'updateWarehouseStatusAndQuantity']);
 
 Route::get('/inventory-list', [InventoryController::class, 'index']);
 Route::get('/productsInWarehouse/{warehouse}', [ProductWarehouseController::class, 'productsInWarehouse']);
 Route::post('/inventory-add', [InventoryController::class, 'store']);
 Route::post('/inventory-edit', [InventoryController::class, 'update']);
 Route::get('/inventory-show/{inventoryId}', [InventoryController::class, 'showInventoryById']);
+// Route::get('/warehouseStateQuantityUpdate/{warehouse}', [ProductWarehouseController::class, 'updateWarehousesStatesQuantity']);
+Route::get('/inventorie-quiantity-in-warehouse/{id}', [ProductWarehouseController::class, 'inventorieQuiantityInWarehouse']);
+Route::get('/inventorie-quiantity-in-warehouses/{id}', [InventoryController::class, 'inventorieQuiantityInWarehouses']);
 //// REQUEST PRODUCTS ADMIN
 Route::post('/request-complete-products-add', [RequestProductsToWarehouseController::class, 'generateOrderAdm']);
 Route::post('/request-products-add', [RequestProductsToWarehouseController::class, 'addProductsAdm']);
@@ -158,4 +175,3 @@ Route::get('/request-product-guide-list/{requestCompleteProducts}/{userId}', [Re
 Route::get('/request-complete-product-title-list/{requestCompleteProducts}', [RequestCompleteProductsController::class, 'productsListTitle']);
 Route::post('/request-complete-update-status/{requestProduct}', [RequestCompleteProductsController::class, 'updateStatusRequestHistory']);
 // Route::post('/request-complete-status/{requestProductStatus}', [RequestCompleteProductsController::class, 'statusRequestHistory']);
-

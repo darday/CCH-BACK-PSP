@@ -369,12 +369,12 @@ class DatabaseSeeder extends Seeder
             'password' => '123456789',
         ]);
         Passenger::create([
-            'ci' => '0603574125',
+            'ci' => '0604090217',
             'name' => 'David Paca',
-            'phone' => '0961119670',
+            'phone' => '0984111628',
             'city' => 'Riobamba',
             'correo' => 'david@gmail.com',
-            'age' => '53',
+            'age' => '31',
             'password' => '123456789',
         ]);
 
@@ -397,8 +397,8 @@ class DatabaseSeeder extends Seeder
             'utility' => '0',
             'contact_phone' => '0961119670',
             'messagge_for_contact' => 'mensaje',
-            'departure_date' => '2024-01-17',
-            'return_date' => '2024-01-18',
+            'departure_date' => '2024-02-17',
+            'return_date' => '2024-02-18',
         ]);
         MonthlyTour::create([
             'tour_name' => 'PON A PRUEBA TU MENTE Y CUERPO',
@@ -418,8 +418,8 @@ class DatabaseSeeder extends Seeder
             'utility' => '0',
             'contact_phone' => '0961119670',
             'messagge_for_contact' => 'mensaje',
-            'departure_date' => '2024-01-17',
-            'return_date' => '2024-01-18',
+            'departure_date' => '2024-02-17',
+            'return_date' => '2024-02-18',
         ]);
         MonthlyTour::create([
             'tour_name' => 'CAMPING EN EL CRATER DE UN VOLCÁN',
@@ -439,13 +439,13 @@ class DatabaseSeeder extends Seeder
             'utility' => '0',
             'contact_phone' => '0961119670',
             'messagge_for_contact' => 'mensaje',
-            'departure_date' => '2024-01-17',
-            'return_date' => '2024-01-18',
+            'departure_date' => '2024-02-17',
+            'return_date' => '2024-02-18',
         ]);
 
         PassengerList::create([
             'list_id' => '1',
-            'passenger_id' => '1',
+            'passenger_ci' => '0603935008',
             'seat' => '3',
             'unit_cost' => '40',
             'total_cost' => '120',
@@ -457,15 +457,16 @@ class DatabaseSeeder extends Seeder
             'meeting_point' => 'Terminal Riobamba',
             'observation' => 'No come carne, Dice que va a pagar el resto el d[ia de la ruta',
             'passenger_type' => 'Responsable',
-            'id_passenger_group_leader' => '1',
+            'passenger_group_leader_ci' => '0603935008',
             'img_cmp_1' => 'img1',
             'img_cmp_2' => 'img2',
             'state' => '8',
+            'state_passenger' => 'Activo',
 
         ]);
         PassengerList::create([
             'list_id' => '1',
-            'passenger_id' => '2',
+            'passenger_ci' => '0606020345',
             'seat' => '0',
             'unit_cost' => '40',
             'total_cost' => '0',
@@ -477,15 +478,16 @@ class DatabaseSeeder extends Seeder
             'meeting_point' => 'Terminal Riobamba',
             'observation' => 'No come carne, Dice que va a pagar el resto el d[ia de la ruta',
             'passenger_type' => 'Acompañante',
-            'id_passenger_group_leader' => '1',
+            'passenger_group_leader_ci' => '0603935008',
             'img_cmp_1' => 'null',
             'img_cmp_2' => 'null',
             'state' => '9',
+            'state_passenger' => 'Activo',
 
         ]);
         PassengerList::create([
             'list_id' => '1',
-            'passenger_id' => '3',
+            'passenger_ci' => '0606020313',
             'seat' => '0',
             'unit_cost' => '40',
             'total_cost' => '0',
@@ -497,10 +499,11 @@ class DatabaseSeeder extends Seeder
             'meeting_point' => 'Terminal Riobamba',
             'observation' => 'No come carne, Dice que va a pagar el resto el d[ia de la ruta',
             'passenger_type' => 'Acompañante',
-            'id_passenger_group_leader' => '1',
+            'passenger_group_leader_ci' => '0603935008',
             'img_cmp_1' => 'null',
             'img_cmp_2' => 'null',
             'state' => '9',
+            'state_passenger' => 'Activo',
 
         ]);
     }

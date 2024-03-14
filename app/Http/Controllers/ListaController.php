@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Lista;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ListaController extends Controller
 {
@@ -33,17 +34,69 @@ class ListaController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
+    // public function store(Request $request)
+    // {
+        
+    //      $data['monthly_tour_id'] = $request->monthly_tour_id;
+    //      $data['description'] = $request->tour_destiny;
+    //      $data['status'] = "1";
+    //      $data['created_at'] = now();
+    //      $data['updated_at'] = now();
+        
+    //      Lista::insert($data);
+    //      $list =  Lista::orderby('created_at','desc') ->first();
+    //     //  return $list->list_id;
+
+    //     //  if($list == 1){
+    //      if($list){
+    //         return response([
+    //             "data" => $data,
+    //             "message" => 'LISTA Generada Exitosamente.',
+    //             "response" => 200,
+    //             "success" => true,
+    //         ]);
+    //      }else {
+    //         return response([
+    //             "data" => $data,
+    //             "messagge" => 'Error Al Generar LISTA.',
+    //             "response" => 500,
+    //             "success" => false,
+    //         ]);
+    //     }
+
+    // }
+
     public function store(Request $request)
     {
+        
          $data['monthly_tour_id'] = $request->monthly_tour_id;
          $data['description'] = $request->tour_destiny;
          $data['status'] = "1";
+         $data['status_list'] = "Activo";
          $data['created_at'] = now();
          $data['updated_at'] = now();
- 
+        
          Lista::insert($data);
          $list =  Lista::orderby('created_at','desc') ->first();
-         return $list->list_id;
+        //  return $list->list_id;
+
+        //  if($list == 1){
+         if($list){
+            return response([
+                "data" => $data,
+                "message" => 'LISTA Generada Exitosamente.',
+                "response" => 200,
+                "success" => true,
+            ]);
+         }else {
+            return response([
+                "data" => $data,
+                "messagge" => 'Error Al Generar LISTA.',
+                "response" => 500,
+                "success" => false,
+            ]);
+        }
+
     }
 
     /**
@@ -86,8 +139,24 @@ class ListaController extends Controller
      * @param  \App\Models\Lista  $lista
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Lista $lista)
+    public function destroy(Lista $lista, $lists_id)
     {
-        //
+        try {
+            DB::table('listas')
+                ->where('list_id', $lists_id)
+                ->update(['status_list' => 'Inactivo']);
+
+            return response([
+                "message" => 'Lista eliminada con éxito',
+                "response" => 200,
+                "success" => true,
+            ]);
+        } catch (\Exception $e) {
+            return response([
+                "message" => 'Error al ELIMINAR lista',
+                "response" => 500,
+                "success" => false,
+            ]);
+        }
     }
 }
