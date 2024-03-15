@@ -90,8 +90,9 @@ Route::post('/passenger-list-create', [PassengerListController::class, 'store'])
 Route::get('/list-passenger-list/{list_id}', [PassengerListController::class, 'listOfPassengers']);
 Route::post('/list-passenger-delete/{passenger_lists_id}', [PassengerListController::class, 'destroy']);
 Route::get('/list-passenger-list-complete/{passenger_lists_id}', [PassengerListController::class, 'listOfPassengersComplete']);
-Route::post('/passenger-list-update/{passenger_list_id}', [PassengerListController::class, 'update']);
-
+Route::post('/passenger-list-update/{passenger_list_id}/{passenger_ci_old}', [PassengerListController::class, 'update']);
+Route::post('/passenger-list-update/{passenger_list_id}', [PassengerListController::class, 'UpdateFullPayment']);
+// Route::post('/passenger-list-update-img2/{passenger_list_id}', [PassengerListController::class, 'updateImg2']);
 
 
 ///////////////////////// CATALOGUE
@@ -108,7 +109,7 @@ Route::get('/equipment-show/{equipment}', [EquipmentController::class, 'showequi
 Route::post('/equipment-delete/{equipment}', [EquipmentController::class, 'destroy']);
 Route::post('/equipment-update/{equipment}', [EquipmentController::class, 'update']);
 
-///////////////////////// EQUIPMENT RENT
+///////////////////////// EQUIPMENT RENT ////////////////////////////////
 Route::post('/equipment-rent-add', [EquipmentRentController::class, 'store']);
 Route::get('/equipment-rent-list', [EquipmentRentController::class, 'index']);
 Route::get('/equipment-rent-show/{equipmentRent}', [EquipmentRentController::class, 'showequipmentrent']);

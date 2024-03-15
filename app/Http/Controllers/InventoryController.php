@@ -302,14 +302,14 @@ class InventoryController extends Controller
             $stockSend = $data['stock'];
             // var_dump('Valor de stock:', $stock);
         }
-        // else {
-        //     var_dump('No se recibió el dato de stock');
-        // }
         if (isset($data['status_id'])) {
             $statusIdSend = $data['status_id'];
             echo 'Valor de status_id:', $statusIdSend, '<br>';
         }
-
+        if (isset($data['warehouse_id'])) {
+            $warehouseIdSend = $data['warehouse_id'];
+            echo 'Valor de wareHOUSE:', $warehouseIdSend, '<br>';
+        }
         // Verificar si existe un registro con el status_id igual a $statusIdSend
         $existsStatusId = DB::table('inventories')
             ->where('product_id', $productsId)
@@ -318,19 +318,41 @@ class InventoryController extends Controller
         // echo 'Valor EXISTENTE:::', $existsStatusId, '<br>';
 
         if (!$existsStatusId) {
-            // echo 'No existe ningún registro en la base de datos con status_id igual a ', $statusIdSend;
-
-            // return response()->json([
-            //     'message' => 'No existe productos en bodegas asignados con el estado seleccionado ' . $statusIdSend,
-            //     'success' => false,
-            // ], 404);
-
-            return response([
-                "message" => "No existen productos en bodegas asignados con el estado seleccionado",
-                "success" => false
+            // Si $statusIdSend no está definido, crea un nuevo registro en la tabla 'inventories'
+            $newInventoryId = DB::table('inventories')->insertGetId([
+                'product_id' => $productsId,
+                'stock' => $stockSend,
+                'withoutWarehouse' => 0,
+                'inWarehouse' => $stockSend,
+                'status_id' => $statusIdSend, // Como $statusIdSend no está definido, asignamos NULL
+                'created_at' => now(), // Asignar la fecha y hora actual como valor de created_at
+                'updated_at' => now()  // Asignar la fecha y hora actual como valor de updated_at
             ]);
-        } else {
-
+            // Verifica si se insertó correctamente el nuevo registro
+            if ($newInventoryId) {
+                echo 'Se insertó un nuevo registro en inventories con ID:', $newInventoryId, '<br>';
+            } else {
+                echo 'Error al insertar el nuevo registro en inventories<br>';
+            }
+            //OBTENIENDO ID DE INVENTORIES PARA LA INSERCION EN PRODUCT WAREHOUSE
+            $getNewInventoriesIdToPW = DB::table('inventories')
+                // ->where('inventories.product_id', $productsId)
+                ->where('inventories.status_id', $statusIdSend)
+                ->value('inventories_id');
+            echo 'Valor de de NEW INVENTORIES ID PARA PRODUCT WAREHOUSE:', $getNewInventoriesIdToPW, '<br>';
+            // INSERCION EN PRODUCT WAREHOUSE
+            $newProductWarehouse = DB::table('product_warehouses')->insertGetId([
+                'inventories_id' => $getNewInventoriesIdToPW,
+                'warehouse_id' => $warehouseIdSend,
+                'quantity' => $stockSend,
+                'created_at' => now(), // Asignar la fecha y hora actual como valor de created_at
+                'updated_at' => now()  // Asignar la fecha y hora actual como valor de updated_at
+            ]);
+            if ($newProductWarehouse) {
+                echo 'Se insertó un nuevo registro en PRODUCT WAREHOUSE con ID:', $newProductWarehouse, '<br>';
+            } else {
+                echo 'Error al insertar el nuevo registro en PRODUCT WAREHOUS<br>';
+            }
             $inventoryProductStock = DB::table('inventories')
                 // ->join('products', 'inventories.product_id', '=', 'products.product_id')
                 ->where('inventories.inventories_id', $inventoriesId)
@@ -353,7 +375,7 @@ class InventoryController extends Controller
                 $newQuiantityInventoriesInWarehouse = $inventoryProductInWarehouse - $stockSend;
                 // var_dump('Valor de la resta de INWAREHOUSE:', $newQuiantityInventoriesInWarehouse);
                 $newQuiantityProductWarehouse = $productWarehouseQuantity - $stockSend;
-                // var_dump('Valor de la resta de QUIANTITY PRODUCT_WAREHOUSES:', $newQuiantityProductWarehouse);
+                var_dump('Valor de la resta de QUIANTITY PRODUCT_WAREHOUSES:', $newQuiantityProductWarehouse);
                 // Actualizar el valor de STOCK: 
                 DB::table('inventories')
                     ->where('inventories_id', $inventoriesId)
@@ -369,29 +391,46 @@ class InventoryController extends Controller
                     ->where('inventories_id', $inventoriesId)
                     // ->where('product_id', $productsId)
                     ->update(['quantity' => $newQuiantityProductWarehouse]);
-
-                // if (isset($data['status_id'])) {
-                //     $statusIdSend = $data['status_id'];
-                //     echo 'Valor de status_id:', $statusIdSend, '<br>';
-                // }
-                // if (!isset($statusIdSend)) {
-                // if ($inventoriesId > 0) {
-                //     // Si $statusIdSend no está definido, crea un nuevo registro en la tabla 'inventories'
-                //     $newInventoryId = DB::table('inventories')->insertGetId([
-                //         'product_id' => $productsId,
-                //         'stock' => $stockSend,
-                //         'withoutWarehouse' => $stockSend,
-                //         'inWarehouse' => 0,
-                //         'status_id' => $statusIdSend // Como $statusIdSend no está definido, asignamos NULL
-                //     ]);
-
-                //     // Verifica si se insertó correctamente el nuevo registro
-                //     if ($newInventoryId) {
-                //         echo 'Se insertó un nuevo registro en inventories con ID:', $newInventoryId, '<br>';
-                //     } else {
-                //         echo 'Error al insertar el nuevo registro en inventories<br>';
-                //     }
-                // } else {
+            }
+        } else {
+            $inventoryProductStock = DB::table('inventories')
+                // ->join('products', 'inventories.product_id', '=', 'products.product_id')
+                ->where('inventories.inventories_id', $inventoriesId)
+                ->where('inventories.product_id', $productsId)
+                ->value('stock');
+            // return $inventoryProductStock;
+            $inventoryProductInWarehouse = DB::table('inventories')
+                ->where('inventories_id', $inventoriesId)
+                ->where('product_id', $productsId)
+                ->value('inWarehouse');
+            // // return $inventoryProductInWarehouse;
+            $productWarehouseQuantity = DB::table('product_warehouses')
+                ->where('inventories_id', $inventoriesId)
+                ->value('quantity');
+            // return $productWarehouseQuantity;
+            if ($inventoryProductStock !== null || $inventoryProductInWarehouse !== null || $productWarehouseQuantity !== null) {
+                //     // Realizar la Restas
+                $newQuiantityInventoriesStock = $inventoryProductStock - $stockSend;
+                // var_dump('Valor de la resta de STOCK:', $newQuiantityInventoriesStock);
+                $newQuiantityInventoriesInWarehouse = $inventoryProductInWarehouse - $stockSend;
+                // var_dump('Valor de la resta de INWAREHOUSE:', $newQuiantityInventoriesInWarehouse);
+                $newQuiantityProductWarehouse = $productWarehouseQuantity - $stockSend;
+                var_dump('Valor de la resta de QUIANTITY PRODUCT_WAREHOUSES:', $newQuiantityProductWarehouse);
+                // Actualizar el valor de STOCK: 
+                DB::table('inventories')
+                    ->where('inventories_id', $inventoriesId)
+                    ->where('product_id', $productsId)
+                    ->update(['stock' => $newQuiantityInventoriesStock]);
+                // Actualizar el valor de IN WAREHOUSE: 
+                DB::table('inventories')
+                    ->where('inventories_id', $inventoriesId)
+                    ->where('product_id', $productsId)
+                    ->update(['inWarehouse' => $newQuiantityInventoriesInWarehouse]);
+                // Actualizar el valor de QUANTITY - PRODUCT WAREHOUSE: 
+                DB::table('product_warehouses')
+                    ->where('inventories_id', $inventoriesId)
+                    // ->where('product_id', $productsId)
+                    ->update(['quantity' => $newQuiantityProductWarehouse]);
                 $sumInventoryStatusId1 = DB::table('inventories')
                     ->where('inventories.product_id', $productsId)
                     ->where('inventories.status_id', $statusIdSend)
@@ -408,14 +447,10 @@ class InventoryController extends Controller
                     $newSumInventoryStatusId2 =  $sumInventoryStatusId2 + $stockSend;
                     var_dump('Valor de la suma de IN WAREHOUSE:', $newSumInventoryStatusId2);
                     DB::table('inventories')
-                        // ->where('inventories_id', $inventoriesId)
-                        // ->where('product_id', $productsId)
                         ->where('status_id', $statusIdSend)
                         ->update(['stock' => $newSumInventoryStatusId1]);
                     // Actualizar el valor de IN WAREHOUSE: 
                     DB::table('inventories')
-                        // ->where('inventories_id', $inventoriesId)
-                        // ->where('product_id', $productsId)
                         ->where('status_id', $statusIdSend)
                         ->update(['inWarehouse' => $newSumInventoryStatusId2]);
                     // OBTENIENDO EL NUEVO ID DE INVENTORIES ID: 
